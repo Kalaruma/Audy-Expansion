@@ -1,0 +1,1725 @@
+<title>Audy Expansion</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>/* required styles */
+
+.leaflet-pane,
+.leaflet-tile,
+.leaflet-marker-icon,
+.leaflet-marker-shadow,
+.leaflet-tile-container,
+.leaflet-pane > svg,
+.leaflet-pane > canvas,
+.leaflet-zoom-box,
+.leaflet-image-layer,
+.leaflet-layer {
+	position: absolute;
+	left: 0;
+	top: 0;
+	}
+.leaflet-container {
+	overflow: hidden;
+	}
+.leaflet-tile,
+.leaflet-marker-icon,
+.leaflet-marker-shadow {
+	-webkit-user-select: none;
+	   -moz-user-select: none;
+	        user-select: none;
+	  -webkit-user-drag: none;
+	}
+/* Prevents IE11 from highlighting tiles in blue */
+.leaflet-tile::selection {
+	background: transparent;
+}
+/* Safari renders non-retina tile on retina better with this, but Chrome is worse */
+.leaflet-safari .leaflet-tile {
+	image-rendering: -webkit-optimize-contrast;
+	}
+/* hack that prevents hw layers "stretching" when loading new tiles */
+.leaflet-safari .leaflet-tile-container {
+	width: 1600px;
+	height: 1600px;
+	-webkit-transform-origin: 0 0;
+	}
+.leaflet-marker-icon,
+.leaflet-marker-shadow {
+	display: block;
+	}
+/* .leaflet-container svg: reset svg max-width decleration shipped in Joomla! (joomla.org) 3.x */
+/* .leaflet-container img: map is broken in FF if you have max-width: 100% on tiles */
+.leaflet-container .leaflet-overlay-pane svg {
+	max-width: none !important;
+	max-height: none !important;
+	}
+.leaflet-container .leaflet-marker-pane img,
+.leaflet-container .leaflet-shadow-pane img,
+.leaflet-container .leaflet-tile-pane img,
+.leaflet-container img.leaflet-image-layer,
+.leaflet-container .leaflet-tile {
+	max-width: none !important;
+	max-height: none !important;
+	width: auto;
+	padding: 0;
+	}
+
+.leaflet-container img.leaflet-tile {
+	/* See: https://bugs.chromium.org/p/chromium/issues/detail?id=600120 */
+	mix-blend-mode: plus-lighter;
+}
+
+.leaflet-container.leaflet-touch-zoom {
+	-ms-touch-action: pan-x pan-y;
+	touch-action: pan-x pan-y;
+	}
+.leaflet-container.leaflet-touch-drag {
+	-ms-touch-action: pinch-zoom;
+	/* Fallback for FF which doesn't support pinch-zoom */
+	touch-action: none;
+	touch-action: pinch-zoom;
+}
+.leaflet-container.leaflet-touch-drag.leaflet-touch-zoom {
+	-ms-touch-action: none;
+	touch-action: none;
+}
+.leaflet-container {
+	-webkit-tap-highlight-color: transparent;
+}
+.leaflet-container a {
+	-webkit-tap-highlight-color: rgba(51, 181, 229, 0.4);
+}
+.leaflet-tile {
+	filter: inherit;
+	visibility: hidden;
+	}
+.leaflet-tile-loaded {
+	visibility: inherit;
+	}
+.leaflet-zoom-box {
+	width: 0;
+	height: 0;
+	-moz-box-sizing: border-box;
+	     box-sizing: border-box;
+	z-index: 800;
+	}
+/* workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=888319 */
+.leaflet-overlay-pane svg {
+	-moz-user-select: none;
+	}
+
+.leaflet-pane         { z-index: 400; }
+
+.leaflet-tile-pane    { z-index: 200; }
+.leaflet-overlay-pane { z-index: 400; }
+.leaflet-shadow-pane  { z-index: 500; }
+.leaflet-marker-pane  { z-index: 600; }
+.leaflet-tooltip-pane   { z-index: 650; }
+.leaflet-popup-pane   { z-index: 700; }
+
+.leaflet-map-pane canvas { z-index: 100; }
+.leaflet-map-pane svg    { z-index: 200; }
+
+.leaflet-vml-shape {
+	width: 1px;
+	height: 1px;
+	}
+.lvml {
+	behavior: url(#default#VML);
+	display: inline-block;
+	position: absolute;
+	}
+
+
+/* control positioning */
+
+.leaflet-control {
+	position: relative;
+	z-index: 800;
+	pointer-events: visiblePainted; /* IE 9-10 doesn't have auto */
+	pointer-events: auto;
+	}
+.leaflet-top,
+.leaflet-bottom {
+	position: absolute;
+	z-index: 1000;
+	pointer-events: none;
+	}
+.leaflet-top {
+	top: 0;
+	}
+.leaflet-right {
+	right: 0;
+	}
+.leaflet-bottom {
+	bottom: 0;
+	}
+.leaflet-left {
+	left: 0;
+	}
+.leaflet-control {
+	float: left;
+	clear: both;
+	}
+.leaflet-right .leaflet-control {
+	float: right;
+	}
+.leaflet-top .leaflet-control {
+	margin-top: 10px;
+	}
+.leaflet-bottom .leaflet-control {
+	margin-bottom: 10px;
+	}
+.leaflet-left .leaflet-control {
+	margin-left: 10px;
+	}
+.leaflet-right .leaflet-control {
+	margin-right: 10px;
+	}
+
+
+/* zoom and fade animations */
+
+.leaflet-fade-anim .leaflet-popup {
+	opacity: 0;
+	-webkit-transition: opacity 0.2s linear;
+	   -moz-transition: opacity 0.2s linear;
+	        transition: opacity 0.2s linear;
+	}
+.leaflet-fade-anim .leaflet-map-pane .leaflet-popup {
+	opacity: 1;
+	}
+.leaflet-zoom-animated {
+	-webkit-transform-origin: 0 0;
+	    -ms-transform-origin: 0 0;
+	        transform-origin: 0 0;
+	}
+svg.leaflet-zoom-animated {
+	will-change: transform;
+}
+
+.leaflet-zoom-anim .leaflet-zoom-animated {
+	-webkit-transition: -webkit-transform 0.25s cubic-bezier(0,0,0.25,1);
+	   -moz-transition:    -moz-transform 0.25s cubic-bezier(0,0,0.25,1);
+	        transition:         transform 0.25s cubic-bezier(0,0,0.25,1);
+	}
+.leaflet-zoom-anim .leaflet-tile,
+.leaflet-pan-anim .leaflet-tile {
+	-webkit-transition: none;
+	   -moz-transition: none;
+	        transition: none;
+	}
+
+.leaflet-zoom-anim .leaflet-zoom-hide {
+	visibility: hidden;
+	}
+
+
+/* cursors */
+
+.leaflet-interactive {
+	cursor: pointer;
+	}
+.leaflet-grab {
+	cursor: -webkit-grab;
+	cursor:    -moz-grab;
+	cursor:         grab;
+	}
+.leaflet-crosshair,
+.leaflet-crosshair .leaflet-interactive {
+	cursor: crosshair;
+	}
+.leaflet-popup-pane,
+.leaflet-control {
+	cursor: auto;
+	}
+.leaflet-dragging .leaflet-grab,
+.leaflet-dragging .leaflet-grab .leaflet-interactive,
+.leaflet-dragging .leaflet-marker-draggable {
+	cursor: move;
+	cursor: -webkit-grabbing;
+	cursor:    -moz-grabbing;
+	cursor:         grabbing;
+	}
+
+/* marker & overlays interactivity */
+.leaflet-marker-icon,
+.leaflet-marker-shadow,
+.leaflet-image-layer,
+.leaflet-pane > svg path,
+.leaflet-tile-container {
+	pointer-events: none;
+	}
+
+.leaflet-marker-icon.leaflet-interactive,
+.leaflet-image-layer.leaflet-interactive,
+.leaflet-pane > svg path.leaflet-interactive,
+svg.leaflet-image-layer.leaflet-interactive path {
+	pointer-events: visiblePainted; /* IE 9-10 doesn't have auto */
+	pointer-events: auto;
+	}
+
+/* visual tweaks */
+
+.leaflet-container {
+	background: #ddd;
+	outline-offset: 1px;
+	}
+.leaflet-container a {
+	color: #0078A8;
+	}
+.leaflet-zoom-box {
+	border: 2px dotted #38f;
+	background: rgba(255,255,255,0.5);
+	}
+
+
+/* general typography */
+.leaflet-container {
+	font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-size: 0.75rem;
+	line-height: 1.5;
+	}
+
+
+/* general toolbar styles */
+
+.leaflet-bar {
+	box-shadow: 0 1px 5px rgba(0,0,0,0.65);
+	border-radius: 4px;
+	}
+.leaflet-bar a {
+	background-color: #fff;
+	border-bottom: 1px solid #ccc;
+	width: 26px;
+	height: 26px;
+	line-height: 26px;
+	display: block;
+	text-align: center;
+	text-decoration: none;
+	color: black;
+	}
+.leaflet-bar a,
+.leaflet-control-layers-toggle {
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	display: block;
+	}
+.leaflet-bar a:hover,
+.leaflet-bar a:focus {
+	background-color: #f4f4f4;
+	}
+.leaflet-bar a:first-child {
+	border-top-left-radius: 4px;
+	border-top-right-radius: 4px;
+	}
+.leaflet-bar a:last-child {
+	border-bottom-left-radius: 4px;
+	border-bottom-right-radius: 4px;
+	border-bottom: none;
+	}
+.leaflet-bar a.leaflet-disabled {
+	cursor: default;
+	background-color: #f4f4f4;
+	color: #bbb;
+	}
+
+.leaflet-touch .leaflet-bar a {
+	width: 30px;
+	height: 30px;
+	line-height: 30px;
+	}
+.leaflet-touch .leaflet-bar a:first-child {
+	border-top-left-radius: 2px;
+	border-top-right-radius: 2px;
+	}
+.leaflet-touch .leaflet-bar a:last-child {
+	border-bottom-left-radius: 2px;
+	border-bottom-right-radius: 2px;
+	}
+
+/* zoom control */
+
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out {
+	font: bold 18px 'Lucida Console', Monaco, monospace;
+	text-indent: 1px;
+	}
+
+.leaflet-touch .leaflet-control-zoom-in, .leaflet-touch .leaflet-control-zoom-out  {
+	font-size: 22px;
+	}
+
+
+/* layers control */
+
+.leaflet-control-layers {
+	box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+	background: #fff;
+	border-radius: 5px;
+	}
+.leaflet-control-layers-toggle {
+	background-image: url(images/layers.png);
+	width: 36px;
+	height: 36px;
+	}
+.leaflet-retina .leaflet-control-layers-toggle {
+	background-image: url(images/layers-2x.png);
+	background-size: 26px 26px;
+	}
+.leaflet-touch .leaflet-control-layers-toggle {
+	width: 44px;
+	height: 44px;
+	}
+.leaflet-control-layers .leaflet-control-layers-list,
+.leaflet-control-layers-expanded .leaflet-control-layers-toggle {
+	display: none;
+	}
+.leaflet-control-layers-expanded .leaflet-control-layers-list {
+	display: block;
+	position: relative;
+	}
+.leaflet-control-layers-expanded {
+	padding: 6px 10px 6px 6px;
+	color: #333;
+	background: #fff;
+	}
+.leaflet-control-layers-scrollbar {
+	overflow-y: scroll;
+	overflow-x: hidden;
+	padding-right: 5px;
+	}
+.leaflet-control-layers-selector {
+	margin-top: 2px;
+	position: relative;
+	top: 1px;
+	}
+.leaflet-control-layers label {
+	display: block;
+	font-size: 13px;
+	font-size: 1.08333em;
+	}
+.leaflet-control-layers-separator {
+	height: 0;
+	border-top: 1px solid #ddd;
+	margin: 5px -10px 5px -6px;
+	}
+
+/* Default icon URLs */
+.leaflet-default-icon-path { /* used only in path-guessing heuristic, see L.Icon.Default */
+	background-image: url(images/marker-icon.png);
+	}
+
+
+/* attribution and scale controls */
+
+.leaflet-container .leaflet-control-attribution {
+	background: #fff;
+	background: rgba(255, 255, 255, 0.8);
+	margin: 0;
+	}
+.leaflet-control-attribution,
+.leaflet-control-scale-line {
+	padding: 0 5px;
+	color: #333;
+	line-height: 1.4;
+	}
+.leaflet-control-attribution a {
+	text-decoration: none;
+	}
+.leaflet-control-attribution a:hover,
+.leaflet-control-attribution a:focus {
+	text-decoration: underline;
+	}
+.leaflet-attribution-flag {
+	display: inline !important;
+	vertical-align: baseline !important;
+	width: 1em;
+	height: 0.6669em;
+	}
+.leaflet-left .leaflet-control-scale {
+	margin-left: 5px;
+	}
+.leaflet-bottom .leaflet-control-scale {
+	margin-bottom: 5px;
+	}
+.leaflet-control-scale-line {
+	border: 2px solid #777;
+	border-top: none;
+	line-height: 1.1;
+	padding: 2px 5px 1px;
+	white-space: nowrap;
+	-moz-box-sizing: border-box;
+	     box-sizing: border-box;
+	background: rgba(255, 255, 255, 0.8);
+	text-shadow: 1px 1px #fff;
+	}
+.leaflet-control-scale-line:not(:first-child) {
+	border-top: 2px solid #777;
+	border-bottom: none;
+	margin-top: -2px;
+	}
+.leaflet-control-scale-line:not(:first-child):not(:last-child) {
+	border-bottom: 2px solid #777;
+	}
+
+.leaflet-touch .leaflet-control-attribution,
+.leaflet-touch .leaflet-control-layers,
+.leaflet-touch .leaflet-bar {
+	box-shadow: none;
+	}
+.leaflet-touch .leaflet-control-layers,
+.leaflet-touch .leaflet-bar {
+	border: 2px solid rgba(0,0,0,0.2);
+	background-clip: padding-box;
+	}
+
+
+/* popup */
+
+.leaflet-popup {
+	position: absolute;
+	text-align: center;
+	margin-bottom: 20px;
+	}
+.leaflet-popup-content-wrapper {
+	padding: 1px;
+	text-align: left;
+	border-radius: 12px;
+	}
+.leaflet-popup-content {
+	margin: 13px 24px 13px 20px;
+	line-height: 1.3;
+	font-size: 13px;
+	font-size: 1.08333em;
+	min-height: 1px;
+	}
+.leaflet-popup-content p {
+	margin: 17px 0;
+	margin: 1.3em 0;
+	}
+.leaflet-popup-tip-container {
+	width: 40px;
+	height: 20px;
+	position: absolute;
+	left: 50%;
+	margin-top: -1px;
+	margin-left: -20px;
+	overflow: hidden;
+	pointer-events: none;
+	}
+.leaflet-popup-tip {
+	width: 17px;
+	height: 17px;
+	padding: 1px;
+
+	margin: -10px auto 0;
+	pointer-events: auto;
+
+	-webkit-transform: rotate(45deg);
+	   -moz-transform: rotate(45deg);
+	    -ms-transform: rotate(45deg);
+	        transform: rotate(45deg);
+	}
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+	background: white;
+	color: #333;
+	box-shadow: 0 3px 14px rgba(0,0,0,0.4);
+	}
+.leaflet-container a.leaflet-popup-close-button {
+	position: absolute;
+	top: 0;
+	right: 0;
+	border: none;
+	text-align: center;
+	width: 24px;
+	height: 24px;
+	font: 16px/24px Tahoma, Verdana, sans-serif;
+	color: #757575;
+	text-decoration: none;
+	background: transparent;
+	}
+.leaflet-container a.leaflet-popup-close-button:hover,
+.leaflet-container a.leaflet-popup-close-button:focus {
+	color: #585858;
+	}
+.leaflet-popup-scrolled {
+	overflow: auto;
+	}
+
+.leaflet-oldie .leaflet-popup-content-wrapper {
+	-ms-zoom: 1;
+	}
+.leaflet-oldie .leaflet-popup-tip {
+	width: 24px;
+	margin: 0 auto;
+
+	-ms-filter: "progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678)";
+	filter: progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678);
+	}
+
+.leaflet-oldie .leaflet-control-zoom,
+.leaflet-oldie .leaflet-control-layers,
+.leaflet-oldie .leaflet-popup-content-wrapper,
+.leaflet-oldie .leaflet-popup-tip {
+	border: 1px solid #999;
+	}
+
+
+/* div icon */
+
+.leaflet-div-icon {
+	background: #fff;
+	border: 1px solid #666;
+	}
+
+
+/* Tooltip */
+/* Base styles for the element that has a tooltip */
+.leaflet-tooltip {
+	position: absolute;
+	padding: 6px;
+	background-color: #fff;
+	border: 1px solid #fff;
+	border-radius: 3px;
+	color: #222;
+	white-space: nowrap;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	pointer-events: none;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+	}
+.leaflet-tooltip.leaflet-interactive {
+	cursor: pointer;
+	pointer-events: auto;
+	}
+.leaflet-tooltip-top:before,
+.leaflet-tooltip-bottom:before,
+.leaflet-tooltip-left:before,
+.leaflet-tooltip-right:before {
+	position: absolute;
+	pointer-events: none;
+	border: 6px solid transparent;
+	background: transparent;
+	content: "";
+	}
+
+/* Directions */
+
+.leaflet-tooltip-bottom {
+	margin-top: 6px;
+}
+.leaflet-tooltip-top {
+	margin-top: -6px;
+}
+.leaflet-tooltip-bottom:before,
+.leaflet-tooltip-top:before {
+	left: 50%;
+	margin-left: -6px;
+	}
+.leaflet-tooltip-top:before {
+	bottom: 0;
+	margin-bottom: -12px;
+	border-top-color: #fff;
+	}
+.leaflet-tooltip-bottom:before {
+	top: 0;
+	margin-top: -12px;
+	margin-left: -6px;
+	border-bottom-color: #fff;
+	}
+.leaflet-tooltip-left {
+	margin-left: -6px;
+}
+.leaflet-tooltip-right {
+	margin-left: 6px;
+}
+.leaflet-tooltip-left:before,
+.leaflet-tooltip-right:before {
+	top: 50%;
+	margin-top: -6px;
+	}
+.leaflet-tooltip-left:before {
+	right: 0;
+	margin-right: -12px;
+	border-left-color: #fff;
+	}
+.leaflet-tooltip-right:before {
+	left: 0;
+	margin-left: -12px;
+	border-right-color: #fff;
+	}
+
+/* Printing */
+
+@media print {
+	/* Prevent printers from removing background-images of controls. */
+	.leaflet-control {
+		-webkit-print-color-adjust: exact;
+		print-color-adjust: exact;
+		}
+	}
+
+</style>
+<style>
+/* Layout: search bar on top, map left with brand toggles, analysis panel right; stacks on phones. */
+:root{
+  --bg:#eef2f6; --panel:#ffffff; --fg:#141a2e; --muted:#5b6478; --line:#dbe1ea;
+  --sea:#d7e4ef; --land:#f8f9fb; --landline:#c3ccd8;
+  --accent:#252B75; --accent2:#2185E0; --gold:#F5C518; --soft:#e6ecfb;
+  --nd:#e9edf2; --c0:#f4f1ea; --c1:#fde2c8; --c2:#f9bd8c; --c3:#ef8c54; --c4:#d65f2c; --c5:#9e3c12;
+  --f-ui:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-num:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0d1120; --panel:#151a2c; --fg:#e7eaf3; --muted:#9aa3b8; --line:#262d45;
+  --sea:#0a1424; --land:#1a2034; --landline:#323b57;
+  --accent:#8e97ff; --accent2:#5fb0ff; --gold:#F5C518; --soft:#20284a;
+  --nd:#20263a; --c0:#1e2333; --c1:#3b2a22; --c2:#5f3a22; --c3:#8f4f25; --c4:#c96a30; --c5:#f59a5f; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0d1120; --panel:#151a2c; --fg:#e7eaf3; --muted:#9aa3b8; --line:#262d45;
+  --sea:#0a1424; --land:#1a2034; --landline:#323b57;
+  --accent:#8e97ff; --accent2:#5fb0ff; --gold:#F5C518; --soft:#20284a;
+  --nd:#20263a; --c0:#1e2333; --c1:#3b2a22; --c2:#5f3a22; --c3:#8f4f25; --c4:#c96a30; --c5:#f59a5f; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-ui);font-size:14px;line-height:1.5}
+.wrap{max-width:1760px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:18px 28px;display:grid;gap:14px}
+header{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:8px 20px}
+.eyebrow{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+h1{font-size:clamp(20px,2.3vw,26px);line-height:1.2;margin:2px 0 0;font-weight:700;text-wrap:balance}
+.stats{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:12.5px;color:var(--muted)}
+.stats b{font-family:var(--f-num);font-weight:500;color:var(--fg)}
+.searchcard{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;display:grid;gap:10px}
+.srow{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.sbox{position:relative;flex:1 1 420px;min-width:0}
+.sbox input{width:100%;font:inherit;font-size:15px;padding:11px 14px 11px 40px;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);color:var(--fg)}
+.sbox input:focus{outline:none;border-color:var(--accent2)}
+.sbox svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.sugg{position:absolute;left:0;right:0;top:calc(100% + 4px);background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.18);z-index:2000;max-height:340px;overflow:auto;list-style:none;margin:0;padding:4px}
+.sugg li{padding:7px 10px;border-radius:7px;cursor:pointer;display:flex;justify-content:space-between;gap:10px}
+.sugg li small{color:var(--muted);font-size:11.5px;white-space:nowrap}
+.sugg li.on,.sugg li:hover{background:var(--soft)}
+.btn{font:inherit;font-size:13.5px;font-weight:600;border:0;border-radius:10px;padding:11px 16px;background:var(--accent);color:#fff;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--fg);border:1px solid var(--line);font-weight:500}
+.hint{font-size:12px;color:var(--muted)}
+.hint code{font-family:var(--f-num);font-size:11.5px;background:var(--bg);padding:1px 5px;border-radius:4px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.seg button{font:inherit;font-size:13px;border:0;background:transparent;color:var(--fg);padding:7px 11px;cursor:pointer;font-family:var(--f-num)}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:#fff;font-weight:600}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent2);outline-offset:2px}
+.lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.main{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:12px;align-items:start}
+@media (max-width:1000px){.main{grid-template-columns:minmax(0,1fr)}}
+.mapcard{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:grid;min-width:0}
+.chips{display:flex;flex-wrap:wrap;gap:6px;padding:8px 10px;border-bottom:1px solid var(--line)}
+.chip{display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:12.5px;border:1px solid var(--line);border-radius:999px;padding:4px 10px 4px 5px;background:var(--panel);color:var(--fg);cursor:pointer}
+.chip[aria-pressed="false"]{opacity:.45}
+.chip .n{font-family:var(--f-num);font-size:11px;color:var(--muted)}
+#map{height:clamp(520px,calc(100vh - 210px),1000px);background:var(--sea)}
+.leaflet-container{background:var(--sea);font-family:var(--f-ui)}
+.legend{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;padding:9px 12px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
+.ramp{display:inline-flex}.ramp i{display:inline-block;width:30px;height:10px}
+.ramp-lbl{display:flex;font-family:var(--f-num);font-size:10px}.ramp-lbl span{width:30px;text-align:center}
+.side{display:grid;gap:14px;min-width:0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;display:grid;gap:10px;min-width:0}
+.card h2{font-size:15px;margin:0;font-weight:700;text-wrap:balance}
+.card h3{font-size:11px;margin:4px 0 0;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.card p{margin:0;color:var(--muted);font-size:13px}
+.coord{font-family:var(--f-num);font-size:12px;color:var(--muted)}
+.big{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.big div{background:var(--panel);padding:10px 12px;display:grid;gap:1px}
+.big b{font-family:var(--f-num);font-weight:500;font-size:22px;font-variant-numeric:tabular-nums}
+.big span{font-size:11.5px;color:var(--muted)}
+.rows{display:grid;gap:1px}
+.row{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:8px;align-items:center;padding:5px 4px;border-radius:6px;font-size:13px;cursor:pointer}
+.row:hover{background:var(--soft)}
+.row .nm{min-width:0;display:grid}
+.row .nm b{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .nm small{color:var(--muted);font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .km{font-family:var(--f-num);font-size:12.5px;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.row .km small{display:block;color:var(--muted);font-size:10.5px}
+.btab{width:100%;border-collapse:collapse;font-size:12.5px}
+.btab td{padding:5px 4px;border-top:1px solid var(--line);vertical-align:middle}
+.btab td.r{text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums;white-space:nowrap}
+.btab td.nr{color:var(--muted);font-size:11.5px;max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.btab tr.zero td{color:var(--muted)}
+.btab tr{cursor:pointer}.btab tr:hover td{background:var(--soft)}
+.mk{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;color:#fff;font:700 8.5px var(--f-num);border:2px solid var(--panel);box-shadow:0 1px 3px rgba(0,0,0,.35);letter-spacing:-.02em}
+.mk.sq{border-radius:5px}
+.mk.audy{width:26px;height:26px;background:#252B75;box-shadow:0 0 0 2.5px #F5C518,0 1px 4px rgba(0,0,0,.4);font-size:9px}
+.mk.mall{background:var(--panel);color:var(--fg);border:2px solid var(--fg);border-radius:4px;width:18px;height:18px;font-size:8px}
+.mk.lg{display:inline-grid;width:18px;height:18px;font-size:7.5px;border-width:1.5px;flex:none}
+.mk.audy.lg{width:18px;height:18px;font-size:7px;box-shadow:0 0 0 2px #F5C518}
+.mk.mall.lg{width:15px;height:15px}
+.mk.mallA{background:var(--fg);color:var(--panel);border:2px solid var(--panel);box-shadow:0 0 0 1.5px var(--fg),0 1px 3px rgba(0,0,0,.3);border-radius:4px;width:20px;height:20px;font-size:9px}
+.mk.mallA.lg{width:16px;height:16px;font-size:8px}
+.mcl{display:inline-block;font:700 10px var(--f-num);padding:0 5px;border-radius:3px;margin-left:4px;vertical-align:1px}
+.mcl.A{background:var(--fg);color:var(--panel)}.mcl.B{border:1px solid var(--muted);color:var(--muted)}
+.clist{display:grid;gap:6px}
+.clist .ci{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;align-items:center;padding:6px 6px 6px 8px;border:1px solid var(--line);border-radius:9px;background:var(--panel);cursor:pointer}
+.clist .ci:hover{background:var(--soft)}
+.clist .ci.on{border-color:var(--accent2);box-shadow:inset 3px 0 0 var(--accent2)}
+.clist .ci .t{min-width:0;display:grid}
+.clist .ci .t b{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px}
+.clist .ci .t small{color:var(--muted);font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kno{display:grid;place-items:center;min-width:30px;height:22px;border-radius:6px;color:#fff;font:700 11px var(--f-num);padding:0 4px}
+.kno.pending{background:#d97706}.kno.ok{background:#16a34a}.kno.no{background:#6b7280}
+.xbtn{font:inherit;font-size:16px;line-height:1;width:28px;height:28px;border-radius:7px;border:1px solid transparent;background:transparent;color:var(--muted);cursor:pointer;display:grid;place-items:center}
+.xbtn:hover{background:var(--bg);border-color:var(--line);color:var(--fg)}
+.clhead{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.linkish{font:inherit;font-size:12px;color:var(--accent2);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline}
+.pinme{width:30px;height:30px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:#e11d48;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.45)}
+.leaflet-tooltip.tip{background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:7px;box-shadow:0 2px 10px rgba(0,0,0,.18);font-size:12.5px;padding:6px 9px;white-space:normal;width:max-content;min-width:180px;max-width:280px}
+.leaflet-tooltip.tip::before{display:none}
+.tip small{color:var(--muted)} .tip b{font-family:var(--f-num);font-weight:500}
+.leaflet-control-zoom a{background:var(--panel)!important;color:var(--fg)!important;border-color:var(--line)!important}
+.leaflet-control-attribution{background:color-mix(in srgb,var(--panel) 85%,transparent)!important;color:var(--muted)!important;font-size:10px}
+.links{display:flex;flex-wrap:wrap;gap:8px}
+.links a{font-size:12.5px;font-weight:600;color:var(--accent2);text-decoration:none;border:1px solid var(--line);border-radius:8px;padding:6px 10px}
+.links a:hover{background:var(--soft)}
+.empty{font-size:13px;color:var(--muted);display:grid;gap:8px}
+.empty ol{margin:0;padding-left:18px;display:grid;gap:4px}
+.badge{display:inline-block;font-size:10.5px;font-weight:600;padding:1px 6px;border-radius:4px;background:var(--soft);color:var(--accent)}
+.foot{color:var(--muted);font-size:12px;display:grid;gap:5px}
+.foot b{color:var(--fg);font-weight:600}
+.msg{font-size:12.5px;color:#b42318}
+/* compact chips: one scrollable row */
+.mapcard{grid-template-columns:minmax(0,1fr)}
+#chipsbar{min-width:0;flex-wrap:nowrap}
+.fsctl{flex:none}
+.chips-in{flex-wrap:nowrap!important;overflow-x:auto;scrollbar-width:thin;padding-bottom:2px}
+.chips-in .chip{flex:none;font-size:12px;padding:3px 9px 3px 4px}
+/* compact side panel */
+.side{gap:10px}
+.side .card{padding:12px;gap:8px}
+.side .big b{font-size:18px}
+.side .big div{padding:8px 10px}
+.side .big span{font-size:11px}
+.side .card h2{font-size:14px}
+.side .btab{font-size:12px}
+.side .btab td.nr{max-width:110px}
+.searchcard{padding:10px 12px;gap:8px}
+.gmaps{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:600;color:var(--fg);text-decoration:none;border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:10px 14px}
+.gmaps:hover{background:var(--soft)}
+.movebar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:#fef3c7;color:#92400e;border-radius:8px;padding:8px 10px;font-size:12.5px}
+.cedit{display:grid;gap:6px;padding:8px;border:1px solid var(--line);border-radius:9px;background:var(--bg)}
+.cedit label{font-size:11px;color:var(--muted);display:grid;gap:2px}
+.cedit input,.cedit textarea{font:inherit;font-size:12.5px;padding:5px 7px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--fg);width:100%}
+.cedit .two{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.ci .acts2{display:flex;gap:2px}
+.medit td{background:var(--bg)}
+.mform{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;align-items:end}
+.mform label{font-size:11px;color:var(--muted);display:grid;gap:3px}
+.mform input,.mform select{font:inherit;font-size:13px;padding:6px 8px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--fg);width:100%}
+.mform .wide{grid-column:span 2}
+.ndnote{font-size:12px;background:var(--soft);border-radius:8px;padding:8px 10px;color:var(--fg)}
+#ws{display:grid;gap:14px}
+#chipsbar{display:flex;flex-wrap:wrap;gap:6px;justify-content:space-between;align-items:flex-start}
+.chips-in{display:flex;flex-wrap:wrap;gap:6px;min-width:0;flex:1 1 400px}
+.fsctl{display:flex;gap:6px;flex-wrap:wrap}
+.fsbtn{font-weight:600;padding:4px 12px 4px 10px}
+#ws.fs{position:fixed;inset:0;z-index:5000;background:var(--bg);gap:8px;grid-template-rows:auto minmax(0,1fr);height:100%;overflow:hidden;
+  padding:max(8px,env(safe-area-inset-top,0px)) max(10px,env(safe-area-inset-right,0px)) max(8px,env(safe-area-inset-bottom,0px)) max(10px,env(safe-area-inset-left,0px))}
+#ws.fs .searchcard{padding:8px 10px;gap:6px}
+#ws.fs .searchcard .hint{display:none}
+#ws.fs .main{height:100%;min-height:0;align-items:stretch;grid-template-columns:minmax(0,1fr) 330px}
+#ws.fs.nopanel .main{grid-template-columns:minmax(0,1fr)}
+#ws.fs.nopanel .side{display:none}
+#ws.fs .mapcard{height:100%;min-height:0;grid-template-rows:auto minmax(0,1fr) auto}
+#ws.fs #map{height:auto;min-height:0}
+#ws.fs .side{overflow:auto;min-height:0;align-content:start}
+@media (max-width:1000px){#ws.fs .main{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1.4fr) minmax(0,1fr)}#ws.fs.nopanel .main{grid-template-rows:minmax(0,1fr)}}
+.nav{display:flex;flex-wrap:wrap;gap:6px}
+.nav a{font-size:13px;font-weight:600;color:var(--fg);text-decoration:none;border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:6px 12px}
+.nav a:hover{background:var(--soft)}
+.nav a .n{font-family:var(--f-num);font-weight:500;color:var(--muted);margin-left:4px}
+.cardhead{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 14px}
+.cardhead p{max-width:70ch}
+.tbl{overflow:auto;border:1px solid var(--line);border-radius:10px}
+#mtbl{max-height:620px}
+.tbl td.cn{min-width:190px}
+.tbl table{width:100%;border-collapse:collapse;font-size:12.5px;min-width:980px}
+.tbl th{position:sticky;top:0;background:var(--bg);text-align:left;font-size:10.5px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;padding:8px;border-bottom:1px solid var(--line);white-space:nowrap}
+.tbl th.r,.tbl td.r{text-align:right}
+.tbl th[data-sort]{cursor:pointer}.tbl th[data-sort]:hover{color:var(--fg)}
+.tbl td{padding:7px 8px;border-top:1px solid var(--line);vertical-align:top}
+.tbl tr:first-child td{border-top:0}
+.tbl td.num{font-family:var(--f-num);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.tbl td small{color:var(--muted);display:block;font-size:11.5px}
+.tbl tr.sel td{background:var(--soft)}
+.tbl .acts{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+.sbtn{font:inherit;font-size:12px;font-weight:600;border:1px solid var(--line);background:var(--panel);color:var(--fg);border-radius:7px;padding:4px 8px;cursor:pointer;white-space:nowrap}
+.sbtn:hover{background:var(--soft)}
+.sbtn.pri{background:var(--accent);border-color:var(--accent);color:#fff}
+.sbtn.ok{color:#15803d;border-color:#86efac}.sbtn.no{color:#b42318;border-color:#fda29b}
+.sbtn[disabled]{opacity:.45;cursor:default}
+.st{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.st.pending{background:#fef3c7;color:#92400e}.st.ok{background:#dcfce7;color:#166534}.st.no{background:#fee2e2;color:#991b1b}
+.lifechips{display:flex;flex-wrap:wrap;gap:4px 8px}
+.lifechips span{white-space:nowrap;font-family:var(--f-num);font-size:11.5px}
+.lifechips i{font-style:normal;display:inline-grid;place-items:center;width:18px;height:14px;border-radius:3px;color:#fff;font:700 8px var(--f-num);margin-right:3px;vertical-align:1px}
+.form{display:grid;gap:8px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.form label{font-size:11.5px;color:var(--muted);display:grid;gap:3px}
+.form input,.form textarea,.tools input,.tools select{font:inherit;font-size:13px;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--fg);width:100%}
+.form textarea{min-height:52px;resize:vertical}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.tools input{flex:1 1 220px;width:auto}.tools select{width:auto}
+.tabs{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.tabs button{font:inherit;font-size:13px;border:0;background:transparent;color:var(--fg);padding:7px 12px;cursor:pointer}
+.tabs button+button{border-left:1px solid var(--line)}
+.tabs button[aria-selected="true"]{background:var(--accent);color:#fff;font-weight:600}
+.ai{white-space:pre-wrap;font-size:13.5px;line-height:1.6;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px 14px;max-height:520px;overflow:auto}
+.note{font-size:12px;color:var(--muted)}
+.candpin{display:grid;place-items:center;width:30px;height:30px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2.5px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.45)}
+.candpin b{transform:rotate(45deg);color:#fff;font:700 11px var(--f-num)}
+.candpin.pending{background:#d97706}.candpin.ok{background:#16a34a}.candpin.no{background:#6b7280}
+.lifemk{display:grid;place-items:center;width:18px;height:18px;border-radius:4px;color:#fff;font:700 7.5px var(--f-num);border:1.5px solid var(--panel);box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.ringlbl{display:inline-block;font:600 11px var(--f-num);background:var(--panel);border:1.5px solid;border-radius:999px;padding:0 7px;white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.distlbl{display:inline-block;font:700 12px var(--f-num);background:#e11d48;color:#fff;border-radius:6px;padding:2px 7px;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,.35)}
+.meas{background:var(--soft);border-radius:10px;padding:10px 12px;font-size:12.5px;display:grid;gap:6px}
+.meas .mrow{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.meas .mbig{font:500 22px var(--f-num);color:#e11d48}
+.linkbtn{font:inherit;font-size:12.5px;font-weight:600;color:var(--accent2);background:transparent;border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+.btab th{font-size:10.5px;font-weight:600;color:var(--muted);text-align:left;padding:2px 4px;text-transform:uppercase;letter-spacing:.04em}
+.btab th.r{text-align:right}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <div class="eyebrow">Audy Dental · Business Development</div>
+      <h1>Audy Expansion</h1>
+    </div>
+    <div class="stats" id="stats"></div>
+  </header>
+  <nav class="nav" aria-label="Bagian halaman"><a href="#peta">Peta &amp; analisa</a><a href="#kandidat">Kandidat untuk approval <span class="n" id="navc">0</span></a><a href="#master">Master data</a></nav>
+
+  <div id="ws">
+  <section class="searchcard" id="peta" aria-label="Cari lokasi">
+    <div class="srow">
+      <div class="sbox">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+        <input id="q" type="text" autocomplete="off" placeholder="Ketik kecamatan, mall, cabang Audy, klinik… atau -6.2615, 106.7810" aria-label="Lokasi yang dicari">
+        <ul class="sugg" id="sugg" hidden></ul>
+      </div>
+      <button class="btn" id="go" type="button">Analisa lokasi</button>
+      <a class="gmaps" id="gmGo" href="https://www.google.com/maps" target="_blank" rel="noopener" title="Cari alamat ini di Google Maps, lalu salin koordinatnya ke sini"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg>Cari di Google Maps</a>
+      <div class="srow" style="gap:6px"><span class="lbl">Wilayah</span>
+        <div class="seg" id="reg" role="group" aria-label="Pindah wilayah peta"><button data-g="jawa">Jawa</button><button data-g="sumatra">Sumatra</button><button data-g="bali">Bali</button><button data-g="kalimantan">Kalimantan</button><button data-g="sulawesi">Sulawesi</button><button data-g="nt">Nusa Tenggara</button><button data-g="mp">Maluku–Papua</button><button data-g="id">Indonesia</button></div>
+      </div>
+      <div class="srow" style="gap:6px"><span class="lbl">Lingkar radius</span>
+        <div class="seg" id="rad" role="group" aria-label="Lingkar radius dari titik">
+          <button data-r="3" aria-pressed="false">3 km</button><button data-r="5" aria-pressed="false">5 km</button><button data-r="35" aria-pressed="true">3 + 5 km</button>
+        </div>
+      </div>
+    </div>
+    <div class="hint">Ketik alamat, desa/kecamatan, mall, cabang atau koordinat, atau klik langsung di peta.</div>
+    <div class="hint" id="gmTip"><b>Titik paling tepat:</b> klik <b>Cari di Google Maps</b> → di Google Maps klik kanan titiknya (HP: tekan lama) → klik angka koordinat untuk menyalin → kembali ke sini dan tekan <b>Ctrl+V</b> di mana saja. Peta langsung pindah ke titik itu.</div>
+    <div class="msg" id="msg" hidden></div>
+  </section>
+
+  <div class="main">
+    <section class="mapcard" aria-label="Peta">
+      <div class="chips" id="chipsbar"><div class="chips-in" id="chips"></div><div class="fsctl"><button class="chip" type="button" id="panelBtn" hidden aria-pressed="true">Panel analisa</button><button class="chip fsbtn" type="button" id="fsBtn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg><span>Layar penuh</span></button></div></div>
+      <div id="map" role="img" aria-label="Peta Jawa–Bali dengan jumlah pasien Audy per kecamatan, cabang Audy, outlet kompetitor dan mall"></div>
+      <div class="legend" id="legend"></div>
+    </section>
+    <aside class="side">
+      <section class="card" id="clistCard" hidden>
+        <div class="clhead"><h2>Lokasi kandidat</h2><button class="xbtn" type="button" id="clClose" aria-label="Tutup daftar kandidat" title="Tutup daftar">×</button></div>
+        <div class="clist" id="clist"></div>
+        <div class="note" id="clHidden"></div>
+      </section>
+      <button class="sbtn" type="button" id="clOpen" hidden>Tampilkan daftar kandidat</button>
+      <section class="card" id="res"></section>
+    </aside>
+  </div>
+  </div>
+
+  <section class="card" id="kandidat">
+    <div class="cardhead"><div style="display:grid;gap:4px"><h2>Kandidat lokasi untuk approval</h2>
+      <p>Setiap PIN kandidat dianalisa otomatis: jarak ke klinik terdekat, pasien Audy dalam 3 dan 5 km, kompetitor, mall dan brand lifestyle terdekat. Tambah kandidat dari panel analisa di atas atau dari tabel master data.</p></div>
+      <div class="tools"><button class="sbtn pri" type="button" id="aiBtn" hidden>Minta analisa Claude</button></div></div>
+    <div class="note" id="storeNote">Memuat daftar kandidat…</div>
+    <div id="candWrap"></div>
+    <div id="aiBox" hidden></div>
+  </section>
+
+  <section class="card" id="master">
+    <div class="cardhead"><div style="display:grid;gap:4px"><h2>Master data</h2><p>Pilih mall atau lokasi lain untuk dianalisa atau langsung dijadikan kandidat. Klik judul kolom untuk mengurutkan.</p></div>
+      <div class="tabs" role="tablist" id="mtabs"><button role="tab" data-t="mall" aria-selected="true">Mall</button><button role="tab" data-t="audy" aria-selected="false">Cabang Audy</button><button role="tab" data-t="comp" aria-selected="false">Kompetitor</button><button role="tab" data-t="life" aria-selected="false">Lifestyle</button></div></div>
+    <div class="tools"><input id="mq" type="search" placeholder="Cari nama, kecamatan, kota…" aria-label="Cari di master data"><button class="sbtn pri" type="button" id="mAdd" hidden>+ Tambah mall</button><select id="mclass" aria-label="Filter kelas mall"><option value="">Kelas A dan B</option><option value="A">Kelas A</option><option value="B">Kelas B</option></select><select id="mcity" aria-label="Filter kota"></select><span class="note" id="mcount"></span></div>
+    <div class="note" id="mHint"></div>
+    <div class="tbl" id="mtbl"></div>
+    <div><button class="sbtn" type="button" id="mmore" hidden>Tampilkan lebih banyak</button></div>
+  </section>
+
+  <section class="card">
+    <h2>Sumber dan batasan data</h2>
+    <div class="foot" id="foot"></div>
+  </section>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<script>window.D=window.__AUDY_DATA__;</script>
+<script>
+(function(){
+const D = window.D;
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const fmt = n => Math.round(n).toLocaleString('id-ID');
+const km = n => (n < 10 ? n.toFixed(1) : Math.round(n)).toString().replace('.', ',') + ' km';
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function hav(a, b, c, d){ const R = 6371, r = Math.PI/180; const x = Math.sin((c-a)*r/2)**2 + Math.cos(a*r)*Math.cos(c*r)*Math.sin((d-b)*r/2)**2; return 2*R*Math.asin(Math.sqrt(x)); }
+
+const BR = D.brandMeta; // {key:{name,color,code,shape}}
+const outlets = D.outlets; // [brandKey, name, lat, lng, addr, kec, kota, q]
+const counts = {}; outlets.forEach(o => counts[o[0]] = (counts[o[0]] || 0) + 1);
+const on = {audy: true, mallA: true, mallB: true, life: false}; Object.keys(BR).forEach(k => on[k] = true);
+const LM = D.lifeMeta;
+let RM = '35';
+try { const s = localStorage.getItem('audyRing'); if (['3','5','35'].includes(s)) RM = s; } catch(e){}
+const ringsOf = m => m === '35' ? [3, 5] : [+m];
+let RINGS = ringsOf(RM), R = Math.max(...RINGS);
+
+// stats
+document.getElementById('stats').innerHTML = `<span><b>${fmt(D.totalPat)}</b> pasien terpetakan</span><span><b>${D.branches.length}</b> cabang Audy</span><span><b>${fmt(outlets.length)}</b> outlet kompetitor</span><span><b>${D.malls.length}</b> mall</span>`;
+
+// map
+const map = L.map('map', {zoomControl: true, preferCanvas: false, minZoom: 4, maxZoom: 17, attributionControl: true}).setView([-6.25, 106.85], 10);
+map.attributionControl.setPrefix(false).addAttribution('Batas wilayah: BIG/BPS · pasien: master pasien Audy');
+['base','kec','ring','pts','brand','mall','audy','cand','me'].forEach((n,i) => { map.createPane(n); map.getPane(n).style.zIndex = 200 + i*50; });
+L.Marker.include({ring(lat, lng, col){ return calm(this, [lat, lng, col]); }});
+map.getPane('ring').style.pointerEvents = 'none';
+
+const ramp = [10, 40, 150, 500, 1500];
+const rampCol = c => css(c > ramp[4] ? '--c5' : c > ramp[3] ? '--c4' : c > ramp[2] ? '--c3' : c > ramp[1] ? '--c2' : c > ramp[0] ? '--c1' : '--c0');
+let L_base, L_kec;
+const REG = {jawa: [[-8.9, 105.1], [-5.8, 114.6]], sumatra: [[-6.0, 95.0], [6.0, 106.6]], bali: [[-8.9, 114.4], [-8.0, 115.8]], kalimantan: [[-4.3, 108.5], [4.5, 119.0]],
+  sulawesi: [[-6.3, 118.7], [2.0, 125.5]], nt: [[-11.0, 115.8], [-8.0, 125.2]], mp: [[-9.0, 124.5], [2.6, 141.1]], id: [[-11.0, 94.8], [6.2, 141.1]]};
+document.getElementById('reg').addEventListener('click', e => { const b = e.target.closest('[data-g]'); if (b) map.fitBounds(REG[b.dataset.g]); });
+const KEC_R = L.canvas({padding: .3, tolerance: 2});
+function drawBase(){
+  if (L_base) map.removeLayer(L_base); if (L_kec) map.removeLayer(L_kec);
+  L_base = L.geoJSON(D.base, {pane: 'base', interactive: false, style: {color: css('--landline'), weight: 1, fillColor: css('--land'), fillOpacity: 1}}).addTo(map);
+  L_kec = L.geoJSON(D.kec, {pane: 'kec', renderer: KEC_R, style: f => ({color: css('--landline'), weight: .4, fillColor: f.properties.nd ? css('--nd') : rampCol(f.properties.c), fillOpacity: .85}),
+    onEachFeature: (f, l) => {
+      const p = f.properties;
+      l.bindTooltip(`Kec. <strong>${esc(p.n)}</strong><br><small>${esc(p.k)}</small><br>${p.nd ? 'Data pasien Audy belum tersedia' : `<b>${fmt(p.c)}</b> pasien Audy`} · cabang terdekat ${km(p.d)}`, {className: 'tip', sticky: true});
+      l.on('click', e => { L.DomEvent.stopPropagation(e); analyse(e.latlng.lat, e.latlng.lng, 'Titik di Kec. ' + p.n); });
+      calm(l, null, 650);
+    }}).addTo(map);
+}
+drawBase();
+
+function icon(cls, txt, size){ return L.divIcon({className: '', html: `<div class="mk ${cls}">${txt}</div>`, iconSize: [size, size], iconAnchor: [size/2, size/2]}); }
+function brandIcon(k){ const b = BR[k]; return L.divIcon({className: '', html: `<div class="mk${b.shape === 'sq' ? ' sq' : ''}" style="background:${b.color}">${b.code}</div>`, iconSize: [22,22], iconAnchor: [11,11]}); }
+function addrLine(o){ return [o[4], o[5] ? 'Kec. ' + o[5] : '', o[6]].filter(Boolean).join(' · '); }
+
+const layers = {};
+layers.audy = L.layerGroup().addTo(map);
+D.branches.forEach(b => L.marker([b.lat, b.lng], {pane: 'audy', icon: icon('audy', b.c, 26)})
+  .bindTooltip(distTip(`<strong>Audy ${esc(b.c)} · ${esc(b.n)}</strong><br><small>Kec. ${esc(b.kec)}</small>`, b.lat, b.lng), {className: 'tip'})
+  .on('click', hit(b.lat, b.lng, 'Audy ' + b.c + ' · ' + b.n)).ring(b.lat, b.lng, '#252B75').addTo(layers.audy));
+layers.mallA = L.layerGroup().addTo(map); layers.mallB = L.layerGroup().addTo(map);
+const mallTag = m => `<span class="mcl ${m[8]}">${m[8]}</span>`;
+function drawMalls(){ layers.mallA.clearLayers(); layers.mallB.clearLayers();
+D.malls.forEach(m => L.marker([m[1], m[2]], {pane: 'mall', icon: m[8] === 'A' ? icon('mallA', 'A', 20) : icon('mall', 'B', 18)})
+  .bindTooltip(distTip(`<strong>${esc(m[0])}</strong> ${mallTag(m)}<br><small>Mall kelas ${m[8]}${m[9] ? ' (' + esc(m[9]) + ')' : ''} · ${esc([m[3] && 'Kec. ' + m[3], m[4]].filter(Boolean).join(' · '))}${['<br>titik Google Maps', '<br>posisi perkiraan', '<br>titik OpenStreetMap', '<br>titik diedit tim'][m[5]] || ''}${m[11] ? '<br>' + esc(m[11]) : ''}</small>`, m[1], m[2]), {className: 'tip'})
+  .on('click', hit(m[1], m[2], m[0])).ring(m[1], m[2], css('--fg')).addTo(layers['mall' + m[8]]));
+  ['A', 'B'].forEach(c => { const el = document.querySelector(`#chips [data-k="mall${c}"] .n`); if (el) el.textContent = D.malls.filter(m => m[8] === c).length; }); }
+drawMalls();
+Object.keys(BR).forEach(k => layers[k] = L.layerGroup().addTo(map));
+outlets.forEach(o => L.marker([o[2], o[3]], {pane: 'brand', icon: brandIcon(o[0])})
+  .bindTooltip(distTip(`<strong>${esc(o[1])}</strong><br><small>${esc(addrLine(o))}${['<br>titik dari situs resmi / Google Maps', '<br>posisi perkiraan (tengah kecamatan)', '<br>titik dari alamat (OpenStreetMap)'][o[7]]}</small>`, o[2], o[3]), {className: 'tip'})
+  .on('click', hit(o[2], o[3], o[1])).ring(o[2], o[3], BR[o[0]].color).addTo(layers[o[0]]));
+
+layers.life = L.layerGroup();
+D.life.forEach(x => L.marker([x[2], x[3]], {pane: 'pts', icon: L.divIcon({className: '', html: `<div class="lifemk" style="background:${LM[x[0]].color}">${LM[x[0]].code}</div>`, iconSize: [18, 18], iconAnchor: [9, 9]})})
+  .bindTooltip(distTip(`<strong>${esc(x[1])}</strong><br><small>${esc(LM[x[0]].name)} · brand lifestyle</small>`, x[2], x[3]), {className: 'tip'})
+  .on('click', hit(x[2], x[3], x[1])).ring(x[2], x[3], LM[x[0]].color).addTo(layers.life));
+
+// chips
+const chipDefs = [['audy', 'Audy Dental', '<span class="mk audy lg">A</span>', D.branches.length]]
+  .concat(Object.keys(BR).map(k => [k, BR[k].name, `<span class="mk lg${BR[k].shape === 'sq' ? ' sq' : ''}" style="background:${BR[k].color}">${BR[k].code}</span>`, counts[k] || 0]))
+  .concat([['mallA', 'Mall kelas A', '<span class="mk mallA lg">A</span>', D.malls.filter(m => m[8] === 'A').length], ['mallB', 'Mall kelas B', '<span class="mk mall lg">B</span>', D.malls.filter(m => m[8] === 'B').length], ['life', 'Lifestyle', '<span class="lifemk" style="display:inline-grid;background:#00704A;width:16px;height:16px">LS</span>', D.life.length]]);
+const chips = document.getElementById('chips');
+chips.innerHTML = chipDefs.map(([k, n, ic, c]) => `<button class="chip" type="button" data-k="${k}" aria-pressed="${on[k] !== false}">${ic}${esc(n)} <span class="n">${c}</span></button>`).join('');
+chips.addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; const k = b.dataset.k; on[k] = !on[k]; b.setAttribute('aria-pressed', on[k]);
+  if (on[k]) layers[k].addTo(map); else map.removeLayer(layers[k]); });
+
+// full screen: native Fullscreen API where the viewer allows it, else a fixed overlay
+const WS = document.getElementById('ws'), fsBtn = document.getElementById('fsBtn'), panelBtn = document.getElementById('panelBtn');
+function fsOn(){ return WS.classList.contains('fs'); }
+function setFs(v){
+  WS.classList.toggle('fs', v); panelBtn.hidden = !v;
+  fsBtn.querySelector('span').textContent = v ? 'Keluar layar penuh' : 'Layar penuh';
+  document.body.style.overflow = v ? 'hidden' : '';
+  setTimeout(() => map.invalidateSize(), 60); setTimeout(() => map.invalidateSize(), 350);
+}
+fsBtn.addEventListener('click', async () => {
+  if (fsOn()) { if (document.fullscreenElement) { try { await document.exitFullscreen(); } catch (e) {} } setFs(false); return; }
+  setFs(true);
+  try { if (WS.requestFullscreen) await WS.requestFullscreen(); } catch (e) {}
+});
+document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement && fsOn()) setFs(false); else setTimeout(() => map.invalidateSize(), 60); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && fsOn() && !document.fullscreenElement) setFs(false); });
+panelBtn.addEventListener('click', () => { const hide = !WS.classList.contains('nopanel'); WS.classList.toggle('nopanel', hide); panelBtn.setAttribute('aria-pressed', !hide); setTimeout(() => map.invalidateSize(), 60); });
+
+// legend
+document.getElementById('legend').innerHTML = `<span>Pasien Audy per kecamatan</span>
+  <span style="display:inline-grid;gap:2px"><span class="ramp">${['--c0','--c1','--c2','--c3','--c4','--c5'].map(c => `<i style="background:var(${c})"></i>`).join('')}</span>
+  <span class="ramp-lbl"><span>0</span><span>10</span><span>40</span><span>150</span><span>500</span><span>1.500+</span></span></span>
+  <span style="display:inline-flex;align-items:center;gap:5px"><i style="display:inline-block;width:14px;height:10px;background:var(--nd);border:1px solid var(--landline)"></i>luar Jawa–Bali: data pasien belum tersedia</span>
+  <span>Lingkaran bulat = klinik kulit/anak · kotak = klinik gigi</span>`;
+
+// gazetteer
+const gaz = [];
+const shortKab = k => k.replace('Kabupaten ', 'Kab. ').replace('Kota Administrasi ', '');
+const parOf = k => norm(k.replace(/^(Kabupaten|Kota Administrasi|Kota)\s+/, ''));
+D.kec.features.forEach((f, i) => { const p = f.properties;
+  gaz.push({t: 'Kecamatan ' + p.n, nm: norm(p.n), par: parOf(p.k), s: shortKab(p.k), lat: p.y, lng: p.x, kind: 'Kecamatan'});
+  (D.vil[i] || '').split('|').filter(Boolean).forEach(v => gaz.push({t: v, nm: norm(v), kn: norm(p.n), par: parOf(p.k), s: 'Desa/Kel. · Kec. ' + p.n + ', ' + shortKab(p.k), lat: p.y, lng: p.x, kind: 'Desa', kec: p.n}));
+});
+const ALIAS = [
+ ['BSD City', -6.3016, 106.6527, 'Kota Tangerang Selatan'], ['Gading Serpong', -6.2416, 106.6283, 'Kabupaten Tangerang'], ['Alam Sutera', -6.2236, 106.6522, 'Kota Tangerang Selatan'],
+ ['Bintaro Jaya', -6.2722, 106.7222, 'Kota Tangerang Selatan'], ['Lippo Karawaci', -6.2263, 106.6083, 'Kabupaten Tangerang'], ['Citra Raya', -6.2560, 106.5280, 'Kabupaten Tangerang'],
+ ['Pantai Indah Kapuk (PIK)', -6.1095, 106.7410, 'Kota Jakarta Utara'], ['Kelapa Gading', -6.1588, 106.9057, 'Kota Jakarta Utara'], ['Sunter', -6.1440, 106.8680, 'Kota Jakarta Utara'],
+ ['Pluit', -6.1180, 106.7920, 'Kota Jakarta Utara'], ['Kemang', -6.2615, 106.8133, 'Kota Jakarta Selatan'], ['SCBD Sudirman', -6.2253, 106.8090, 'Kota Jakarta Selatan'],
+ ['Kuningan (Mega Kuningan)', -6.2290, 106.8290, 'Kota Jakarta Selatan'], ['Pondok Indah', -6.2650, 106.7840, 'Kota Jakarta Selatan'], ['Senayan', -6.2250, 106.8000, 'Kota Jakarta Pusat'],
+ ['Fatmawati', -6.2830, 106.7970, 'Kota Jakarta Selatan'], ['Blok M', -6.2440, 106.8000, 'Kota Jakarta Selatan'], ['Puri Indah', -6.1880, 106.7340, 'Kota Jakarta Barat'],
+ ['Tanjung Duren', -6.1770, 106.7890, 'Kota Jakarta Barat'], ['Green Ville', -6.1680, 106.7740, 'Kota Jakarta Barat'], ['Cibubur', -6.3690, 106.8960, 'Kota Jakarta Timur'],
+ ['Rawamangun', -6.1950, 106.8830, 'Kota Jakarta Timur'], ['Kota Wisata Cibubur', -6.3720, 106.9550, 'Kabupaten Bogor'], ['Summarecon Bekasi', -6.2260, 107.0010, 'Kota Bekasi'],
+ ['Harapan Indah', -6.1790, 106.9800, 'Kota Bekasi'], ['Grand Wisata', -6.2950, 107.0440, 'Kabupaten Bekasi'], ['Galaxy Bekasi', -6.2730, 106.9720, 'Kota Bekasi'],
+ ['Jababeka', -6.2940, 107.1550, 'Kabupaten Bekasi'], ['Lippo Cikarang', -6.3330, 107.1440, 'Kabupaten Bekasi'], ['Kota Deltamas', -6.3560, 107.1690, 'Kabupaten Bekasi'],
+ ['Sentul City', -6.5700, 106.8580, 'Kabupaten Bogor'], ['Margonda', -6.3720, 106.8320, 'Kota Depok'], ['Grand Depok City', -6.4100, 106.8250, 'Kota Depok'],
+ ['Dago', -6.8840, 107.6130, 'Kota Bandung'], ['Pasteur', -6.8940, 107.5880, 'Kota Bandung'], ['Buah Batu', -6.9480, 107.6340, 'Kota Bandung'],
+ ['Kota Baru Parahyangan', -6.8580, 107.4860, 'Kabupaten Bandung Barat'], ['Darmo', -7.2850, 112.7380, 'Kota Surabaya'], ['Citraland Surabaya', -7.2870, 112.6510, 'Kota Surabaya'],
+ ['Pakuwon City', -7.2720, 112.8010, 'Kota Surabaya'], ['Simpang Lima Semarang', -6.9900, 110.4230, 'Kota Semarang'], ['Malioboro', -7.7930, 110.3660, 'Kota Yogyakarta'],
+ ['Seturan', -7.7700, 110.4100, 'Kabupaten Sleman'], ['Kuta', -8.7180, 115.1700, 'Kabupaten Badung'], ['Seminyak', -8.6880, 115.1640, 'Kabupaten Badung'],
+ ['Canggu', -8.6500, 115.1350, 'Kabupaten Badung'], ['Renon', -8.6750, 115.2370, 'Kota Denpasar'],
+ ['BSD', -6.3016, 106.6527, 'Kota Tangerang Selatan'], ['PIK', -6.1095, 106.7410, 'Kota Jakarta Utara'], ['SCBD', -6.2253, 106.8090, 'Kota Jakarta Selatan'], ['Bintaro', -6.2722, 106.7222, 'Kota Tangerang Selatan'], ['Karawaci', -6.2263, 106.6083, 'Kabupaten Tangerang'], ['Serpong', -6.3016, 106.6527, 'Kota Tangerang Selatan'], ['Ubud', -8.5070, 115.2620, 'Kabupaten Gianyar'],
+];
+ALIAS.forEach(a => gaz.push({t: a[0], nm: norm(a[0].replace(/\(.*\)/, '')), par: parOf(a[3]), s: 'Kawasan · ' + a[3].replace('Kabupaten ', 'Kab. '), lat: a[1], lng: a[2], kind: 'Area'}));
+D.kab.forEach(k => gaz.push({t: k[0], nm: parOf(k[0]), par: parOf(k[0]), s: 'Kota/Kabupaten', lat: k[1], lng: k[2], kind: 'Kota', z: 11}));
+D.branches.forEach(b => gaz.push({t: 'Audy ' + b.c + ' · ' + b.n, nm: norm('Audy ' + b.n), par: parOf((kecAt(b.lat, b.lng) || {k: ''}).k), s: 'Cabang Audy · Kec. ' + b.kec, lat: b.lat, lng: b.lng, kind: 'Audy'}));
+D.malls.forEach(m => gaz.push({t: m[0], nm: norm(m[0]), par: m[4] ? parOf(m[4]) : '', s: 'Mall kelas ' + m[8] + (m[4] ? ' · ' + m[4] : ''), lat: m[1], lng: m[2], kind: 'Mall'}));
+D.places.forEach(p => gaz.push({t: p[0], nm: norm(p[0]), par: parOf((kecAt(p[1], p[2]) || {k: ''}).k), s: p[3], lat: p[1], lng: p[2], kind: 'Area'}));
+outlets.forEach(o => gaz.push({t: o[1], nm: norm(o[1]), par: o[6] ? parOf(o[6]) : '', s: BR[o[0]].name + (o[6] ? ' · ' + o[6] : ''), lat: o[2], lng: o[3], kind: 'Outlet'}));
+gaz.forEach(g => g.k = norm(g.t + ' ' + g.s));
+function norm(s){ return String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim(); }
+const STOP = new Set(['jl','jln','jalan','no','nomor','ruko','komplek','perumahan','gedung','lantai','rt','rw','kav','kavling','raya','kabupaten','kota','jawa barat','jawa timur','jawa tengah','barat','timur','utara','selatan','tengah','pusat','raya','jalan','indonesia','banten','bali','blok','ruko','mall','plaza','pasar','kampung','desa','kelurahan','kecamatan','provinsi','daerah','sentosa','harapan','mekar','jaya','baru','lama']);
+const stripUrls = s => s.replace(/https?:\/\/\S+/g, ' ');
+const kindRank = {Area: 0, Kecamatan: 1, Mall: 2, Audy: 3, Kota: 4, Desa: 5, Outlet: 6};
+const spec = {Outlet: 9, Audy: 9, Mall: 8, Area: 10, Desa: 6, Kecamatan: 5, Kota: 2};
+// short query: every typed word must appear (typeahead)
+function findPrefix(n){
+  const toks = n.split(' ');
+  return gaz.map(g => { if (!toks.every(t => g.k.includes(t))) return null; const tn = norm(g.t);
+      let sc = kindRank[g.kind]; if (tn === n || tn.endsWith(' ' + n)) sc -= 10; else if (tn.startsWith(n) || tn.includes(' ' + n)) sc -= 5; return [sc, g]; })
+    .filter(Boolean).sort((a, b) => a[0] - b[0] || a[1].t.length - b[1].t.length).slice(0, 12).map(x => x[1]);
+}
+// cities named in the text (longest match wins: 'tangerang selatan' beats 'tangerang')
+const KABS = [...new Set(D.kab.map(k => parOf(k[0])))];
+const ABBR = [[/\bjaksel\b/g, 'jakarta selatan'], [/\bjakbar\b/g, 'jakarta barat'], [/\bjaktim\b/g, 'jakarta timur'], [/\bjakut\b/g, 'jakarta utara'], [/\bjakpus\b/g, 'jakarta pusat'], [/\btangsel\b/g, 'tangerang selatan'], [/\bsby\b/g, 'surabaya'], [/\bbdg\b/g, 'bandung'], [/\bjogja\b|\bjogjakarta\b/g, 'yogyakarta'], [/\bdki\b/g, 'jakarta']];
+const expand = n => ABBR.reduce((t, [re, v]) => t.replace(re, v), n);
+function kabsIn(hay){
+  let m = KABS.filter(p => p.length >= 4 && hay.includes(' ' + p + ' '));
+  m = m.filter(p => !m.some(q => q !== p && q.includes(p)));
+  if (!m.length && hay.includes(' jakarta ')) m = KABS.filter(p => p.startsWith('jakarta'));
+  return m;
+}
+// long query / pasted address: find known place names inside the text
+function findPhrase(n){
+  n = expand(n);
+  const hay = ' ' + n + ' ', seen = new Set(), acc = kabsIn(hay);
+  const inAcc = g => !acc.length || (g.par && acc.includes(g.par)) || (g.kind === 'Kota' && acc.includes(g.nm));
+  const out = gaz.map(g => { if (!g.nm || g.nm.length < 3 || STOP.has(g.nm) || !hay.includes(' ' + g.nm + ' ') || !inAcc(g)) return null;
+      let sc = spec[g.kind] + g.nm.split(' ').length * .6; if (g.par && hay.includes(' ' + g.par + ' ')) sc += 4; if (g.kn && hay.includes(' ' + g.kn + ' ')) sc += 2 + g.kn.split(' ').length; if (g.kind === 'Kota' && g.t.startsWith('Kota ')) sc += .5; return [sc, g]; })
+    .filter(Boolean).sort((a, b) => b[0] - a[0]).map(x => x[1])
+    .filter(g => { const key = g.t + '|' + g.lat; if (seen.has(key)) return false; seen.add(key); return true; }).slice(0, 12);
+  // the text names a city but nothing more specific we know: fall back to that city
+  if (!out.length && acc.length) return gaz.filter(g => g.kind === 'Kota' && acc.includes(g.nm)).sort((a, b) => (b.t.startsWith('Kota') ? 1 : 0) - (a.t.startsWith('Kota') ? 1 : 0)).slice(0, 6);
+  return out;
+}
+function find(q){
+  const raw = stripUrls(q), n = norm(raw); if (!n) return [];
+  const long = /[,\n]/.test(raw) || n.split(' ').length >= 3;
+  if (long) { const p = findPhrase(n); if (p.length) return p; }
+  const a = findPrefix(n); return a.length ? a : findPhrase(n);
+}
+function parseCoord(q){
+  let m = q.match(/@(-?\d+\.\d+),\s*(-?\d+\.\d+)/) || q.match(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/) || q.match(/[?&](?:q|query|ll|center|destination)=(-?\d+\.\d+)(?:,|%2C)\s*(-?\d+\.\d+)/i) || q.match(/^\s*(-?\d{1,2}(?:[.,]\d+)?)\s*[,; ]\s*(-?\d{2,3}(?:[.,]\d+)?)\s*$/);
+  if (!m) { const dms = q.match(/(\d{1,2})°\s*(\d{1,2})'\s*([\d.]+)"?\s*([NS])[\s,]+(\d{1,3})°\s*(\d{1,2})'\s*([\d.]+)"?\s*([EW])/i);
+    if (dms) { const la = (+dms[1] + dms[2]/60 + dms[3]/3600) * (/s/i.test(dms[4]) ? -1 : 1), lo = (+dms[5] + dms[6]/60 + dms[7]/3600) * (/w/i.test(dms[8]) ? -1 : 1); return [la, lo]; } return null; }
+  let a = parseFloat(m[1].replace(',', '.')), b = parseFloat(m[2].replace(',', '.'));
+  if (Math.abs(a) > 90 && Math.abs(b) <= 90) [a, b] = [b, a];
+  if (isNaN(a) || isNaN(b) || Math.abs(a) > 90 || Math.abs(b) > 180) return null; return [a, b];
+}
+const isShort = q => /(maps\.app\.goo\.gl|goo\.gl\/maps|g\.co\/kgs)/i.test(q);
+const SHORT_MSG = 'Link pendek Google Maps (maps.app.goo.gl) tidak bisa dibuka dari halaman ini. Buka link itu, lalu salin angka koordinat (di HP: tekan lama titik merah; di komputer: klik kanan titik, klik angka paling atas) dan tempel di sini.';
+
+const qi = document.getElementById('q'), sg = document.getElementById('sugg'), msg = document.getElementById('msg');
+let cur = [], hi = 0;
+function say(t){ msg.textContent = t; msg.hidden = !t; }
+function showSugg(){
+  const v = qi.value; say(''); GEO_Q = '';
+  if (parseCoord(v)) { cur = []; sg.hidden = true; return; }
+  cur = find(v); hi = 0;
+  if (!cur.length || stripUrls(v).trim().length < 2) { sg.hidden = true; if (isShort(v) && !cur.length) say(SHORT_MSG); return; }
+  sg.innerHTML = cur.map((g, i) => `<li data-i="${i}" class="${i === hi ? 'on' : ''}"><span>${esc(g.t)}</span><small>${esc(g.s)}</small></li>`).join(''); sg.hidden = false;
+}
+var GEO_Q = '';
+const COARSE = {Desa: 1, Kecamatan: 1, Kota: 1, Area: 1};
+const looksLikeAddress = v => /\b(jl|jln|jalan|no|ruko|blok|gedung|komplek|perum|tower|apartemen|kav)\b/i.test(v) || stripUrls(v).trim().split(/\s+/).length >= 3;
+async function claudeGeocode(q, btn){
+  if (!ST.sample) return;
+  const out = document.getElementById('geoOut') || msg; btn && (btn.disabled = true);
+  out.hidden = false; out.textContent = 'Claude sedang mencari titik alamat ini…';
+  const acc = kabsIn(' ' + expand(norm(q)) + ' ');
+  try {
+    const r = await ST.sample.json(`Anda membantu memetakan alamat di Indonesia untuk analisa lokasi klinik. Alamat yang dicari: "${stripUrls(q).trim()}".
+Berdasarkan pengetahuan Anda tentang jalan, gedung, ruko, perumahan, mall dan landmark di Indonesia, berikan koordinat WGS84 terbaik untuk alamat ini.
+Balas HANYA JSON: {"lat": number|null, "lng": number|null, "tempat": "nama jalan/gedung/kawasan yang Anda kenali", "kecamatan": string|null, "kota": string|null, "ketelitian": "gedung"|"jalan"|"kawasan"|"kota"|"tidak tahu"}.
+Jika Anda tidak yakin sama sekali, isi ketelitian "tidak tahu" dan lat/lng null. Jangan mengarang nama tempat.`, {modelTier: 'default'});
+    const lat = +r.lat, lng = +r.lng;
+    if (!r || r.ketelitian === 'tidak tahu' || !isFinite(lat) || !isFinite(lng) || lat < -11.5 || lat > 6.5 || lng < 94.5 || lng > 141.5) { out.textContent = 'Claude tidak yakin dengan lokasi alamat ini. Salin koordinatnya dari Google Maps lalu tempel di kotak pencarian.'; btn && (btn.disabled = false); return; }
+    const k = kecAt(lat, lng); let warn = '';
+    if (acc.length && k && !acc.includes(parOf(k.k))) warn = ` Titik ini jatuh di ${k.k}, sedangkan alamat menyebut ${acc.join(' / ')}. Periksa di Google Maps.`;
+    GEO_Q = '';
+    analyse(lat, lng, (r.tempat || stripUrls(q).trim()).slice(0, 90), 15, false, `Titik perkiraan Claude (ketelitian: ${r.ketelitian || 'tidak disebut'}).${warn} Klik "Buka titik di Google Maps" untuk memastikan; bila meleset, tempel koordinat persis dari Google Maps.`);
+    say('');
+  } catch (e) {
+    out.textContent = e && e.code === 'not_granted' ? 'Izin bertanya ke Claude tidak diberikan di tampilan ini. Tempel koordinat dari Google Maps.' : e && e.code === 'rate_limited' ? 'Terlalu banyak permintaan ke Claude. Coba lagi sebentar lagi.' : 'Claude gagal memberi titik. Coba lagi, atau tempel koordinat dari Google Maps.';
+    btn && (btn.disabled = false);
+  }
+}
+function pick(g, fromShort){ sg.hidden = true; const v = qi.value; if (!fromShort) qi.value = g.t;
+  GEO_Q = COARSE[g.kind] && looksLikeAddress(v) ? v : '';
+  const lbl = g.kind === 'Desa' ? `Desa/Kel. ${g.t}, Kec. ${g.kec}` : g.t;
+  analyse(g.lat, g.lng, lbl, g.z, false, g.kind === 'Desa' || g.kind === 'Kecamatan' ? 'Titik diletakkan di tengah kecamatan. Untuk titik persis, tempel koordinat dari Google Maps.' : '');
+  if (isShort(v)) say('Link pendek Google Maps tidak bisa dibuka dari halaman ini, jadi titik diambil dari alamat yang Anda tulis: ' + g.t + '. Untuk titik persis, tempel angka koordinatnya.');
+}
+function submit(){
+  const v = qi.value.trim(); if (!v) return; const c = parseCoord(v);
+  if (c) { sg.hidden = true; analyse(c[0], c[1], 'Koordinat ' + c[0].toFixed(5) + ', ' + c[1].toFixed(5)); return; }
+  const r = cur.length ? cur : find(v);
+  if (r.length) pick(r[hi] || r[0], isShort(v));
+  else { say(isShort(v) ? SHORT_MSG : `"${v}" belum ada di daftar lokasi peta ini.`);
+    if (ST.sample && !isShort(v)) { msg.insertAdjacentHTML('beforeend', ' <button class="sbtn pri" type="button" id="geoBtn2">Cari titik dengan Claude</button>'); document.getElementById('geoBtn2').onclick = e => claudeGeocode(v, e.target); }
+    else if (!isShort(v)) msg.insertAdjacentText('beforeend', ' Coba nama desa/kelurahan, kecamatan, atau mall terdekat, atau tempel koordinat dari Google Maps.'); }
+}
+qi.addEventListener('input', showSugg);
+// keep the Google Maps button pointed at what was typed
+const gmGo = document.getElementById('gmGo');
+qi.addEventListener('input', () => { const v = stripUrls(qi.value).trim(); gmGo.href = v && !parseCoord(qi.value) ? 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(v) : 'https://www.google.com/maps'; });
+// paste coordinates (or a full Google Maps link) anywhere on the page -> go straight there
+document.addEventListener('paste', e => {
+  const t = (e.clipboardData && e.clipboardData.getData('text')) || ''; const c = parseCoord(t.trim());
+  const tgt = e.target; const typing = tgt && (tgt.tagName === 'TEXTAREA' || (tgt.tagName === 'INPUT' && tgt.id !== 'q'));
+  if (!c || typing) return;
+  e.preventDefault(); qi.value = t.trim(); sg.hidden = true; say('');
+  analyse(c[0], c[1], 'Koordinat ' + c[0].toFixed(5) + ', ' + c[1].toFixed(5), 16, false, 'Titik dari Google Maps.');
+});
+qi.addEventListener('keydown', e => {
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { if (!cur.length) return; e.preventDefault(); hi = (hi + (e.key === 'ArrowDown' ? 1 : -1) + cur.length) % cur.length; [...sg.children].forEach((li, i) => li.classList.toggle('on', i === hi)); sg.children[hi]?.scrollIntoView({block: 'nearest'}); }
+  else if (e.key === 'Enter') { e.preventDefault(); submit(); } else if (e.key === 'Escape') sg.hidden = true;
+});
+sg.addEventListener('mousedown', e => { const li = e.target.closest('li'); if (li) { e.preventDefault(); pick(cur[+li.dataset.i]); } });
+qi.addEventListener('blur', () => setTimeout(() => sg.hidden = true, 150));
+document.getElementById('go').addEventListener('click', submit);
+
+const radBtns = [...document.querySelectorAll('#rad button')];
+function setRad(m){ RM = m; RINGS = ringsOf(m); R = Math.max(...RINGS); radBtns.forEach(b => b.setAttribute('aria-pressed', b.dataset.r === m)); try { localStorage.setItem('audyRing', m); } catch(e){} if (last) analyse(last.lat, last.lng, last.label, null, true, last.note); }
+radBtns.forEach(b => b.addEventListener('click', () => setRad(b.dataset.r)));
+radBtns.forEach(b => b.setAttribute('aria-pressed', b.dataset.r === RM));
+
+map.on('click', e => { if (e.originalEvent && e.originalEvent.target.closest && e.originalEvent.target.closest('.mk')) return; analyse(e.latlng.lat, e.latlng.lng, 'Titik pilihan'); });
+
+// point in polygon for kecamatan lookup
+function inRing(x, y, ring){ let ins = false; for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) { const xi = ring[i][0], yi = ring[i][1], xj = ring[j][0], yj = ring[j][1]; if (((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi)) ins = !ins; } return ins; }
+function inPoly(x, y, rings){ if (!inRing(x, y, rings[0])) return false; for (let i = 1; i < rings.length; i++) if (inRing(x, y, rings[i])) return false; return true; }
+function kecAt(lat, lng){ const B = kecBoxes(); for (let i = 0; i < B.length; i++) { const b = B[i]; if (lng < b.x0 || lng > b.x1 || lat < b.y0 || lat > b.y1) continue; if (b.polys.some(p => inPoly(lng, lat, p))) return D.kec.features[i].properties; }
+  // point fell in a gap between simplified polygons: take the nearest kecamatan centre within 3 km
+  let best = null, bd = 3; for (let i = 0; i < B.length; i++) { const b = B[i]; if (lng < b.x0 - .03 || lng > b.x1 + .03 || lat < b.y0 - .03 || lat > b.y1 + .03) continue; const d = hav(lat, lng, b.cy, b.cx); if (d < bd) { bd = d; best = D.kec.features[i].properties; } } return best; }
+
+var L_me = null, last = null, L_line = null;
+function measure(tlat, tlng, name, fit){
+  if (!last) return analyse(tlat, tlng, name);
+  if (L_line) L_me.removeLayer(L_line);
+  const d = hav(last.lat, last.lng, tlat, tlng), mid = [(last.lat + tlat) / 2, (last.lng + tlng) / 2];
+  L_line = L.layerGroup([
+    L.polyline([[last.lat, last.lng], [tlat, tlng]], {pane: 'ring', color: '#e11d48', weight: 3, dashArray: '2 6', lineCap: 'round'}),
+    L.circleMarker([tlat, tlng], {pane: 'me', radius: 15, color: '#e11d48', weight: 2.5, fill: false, interactive: false}),
+    L.marker(mid, {pane: 'me', interactive: false, icon: L.divIcon({className: '', html: `<span class="distlbl">${km(d)}</span>`, iconSize: [70, 22], iconAnchor: [35, 11]})})
+  ]).addTo(L_me);
+  if (fit) map.fitBounds(L.latLngBounds([[last.lat, last.lng], [tlat, tlng]]).pad(.35), {maxZoom: 15});
+  const box = document.getElementById('meas');
+  if (box) { const ring = RINGS.find(r => d <= r);
+    box.innerHTML = `<div><b>${esc(name)}</b></div><div class="mrow"><span class="mbig">${km(d)}</span><span>garis lurus dari titik Anda · ${ring ? `<strong>di dalam lingkar ${ring} km</strong>` : `di luar lingkar ${R} km`}</span></div>
+      <div class="links"><a href="https://www.google.com/maps/dir/?api=1&origin=${last.lat.toFixed(6)},${last.lng.toFixed(6)}&destination=${tlat.toFixed(6)},${tlng.toFixed(6)}" target="_blank" rel="noopener">Jarak jalan di Google Maps</a><button class="linkbtn" type="button" id="mv">Jadikan titik analisa</button></div>`;
+    document.getElementById('mv').onclick = () => analyse(tlat, tlng, name); }
+}
+// preview rings around whatever is under the cursor (same 3/5 km setting as the main point)
+var L_hover = null, hoverOff = null;
+const HOVER_DELAY = 280, HOVER_HOLD = 2200;
+function clearHover(){ clearTimeout(hoverOff); if (L_hover) { map.removeLayer(L_hover); L_hover = null; } }
+function hoverRings(lat, lng, col){
+  clearHover(); L_hover = L.layerGroup().addTo(map); hoverOff = setTimeout(clearHover, HOVER_HOLD);
+  RINGS.forEach(r => {
+    const inner = RINGS.length > 1 && r === Math.min(...RINGS);
+    L.circle([lat, lng], {pane: 'ring', radius: r * 1000, color: col, weight: 2, opacity: .9, dashArray: inner ? null : '6 5', fillColor: col, fillOpacity: inner ? .08 : .04, interactive: false}).addTo(L_hover);
+    L.marker([lat - r / 110.574, lng], {pane: 'me', interactive: false, icon: L.divIcon({className: '', html: `<span class="ringlbl" style="border-color:${col};color:${col}">${r} km</span>`, iconSize: [44, 18], iconAnchor: [22, 9]})}).addTo(L_hover);
+  });
+}
+// replace Leaflet's instant tooltip with: wait HOVER_DELAY, show tooltip (+ rings), hide after HOVER_HOLD
+function calm(layer, ring, delay){
+  let t1 = null, t2 = null;
+  layer.off('mouseover', layer._openTooltip, layer);
+  layer.on('mouseover', e => { clearTimeout(t1); clearTimeout(t2);
+    t1 = setTimeout(() => { if (layer.getTooltip()) layer.openTooltip(e.latlng); if (ring) hoverRings(...ring);
+      t2 = setTimeout(() => { layer.closeTooltip(); }, HOVER_HOLD); }, delay || HOVER_DELAY); });
+  layer.on('mouseout', () => { clearTimeout(t1); clearTimeout(t2); layer.closeTooltip(); if (ring) clearHover(); });
+  layer.on('click', () => { clearTimeout(t1); clearTimeout(t2); layer.closeTooltip(); });
+  return layer;
+}
+function hit(lat, lng, name){ return () => last ? measure(lat, lng, name) : analyse(lat, lng, name); }
+function distTip(html, lat, lng){ return () => html + (last ? `<br><b>${km(hav(last.lat, last.lng, lat, lng))}</b> dari titik Anda` : ''); }
+// patients inside rings: each kecamatan's patients spread evenly over its area, sampled on a grid
+var KB = null;
+function kecBoxes(){ if (KB) return KB; KB = D.kec.features.map(f => { const g = f.geometry; const polys = g.type === 'Polygon' ? [g.coordinates] : g.coordinates;
+  let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9; polys.forEach(p => p[0].forEach(([x, y]) => { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }));
+  return {polys, x0, y0, x1, y1, c: f.properties.c, cx: f.properties.x, cy: f.properties.y}; }); return KB; }
+function patientsIn(lat, lng, rings){
+  const out = {}; rings.forEach(r => out[r] = 0); const rMax = Math.max(...rings);
+  const dla = rMax / 110.574, dlo = rMax / (111.32 * Math.cos(lat * Math.PI / 180));
+  kecBoxes().forEach(b => {
+    if (!b.c || b.x1 < lng - dlo || b.x0 > lng + dlo || b.y1 < lat - dla || b.y0 > lat + dla) return;
+    const st = Math.max(0.0018, Math.sqrt((b.x1 - b.x0) * (b.y1 - b.y0)) / 45);
+    let n = 0; const m = {}; rings.forEach(r => m[r] = 0);
+    for (let y = b.y0 + st / 2; y < b.y1; y += st) for (let x = b.x0 + st / 2; x < b.x1; x += st) {
+      if (!b.polys.some(p => inPoly(x, y, p))) continue; n++;
+      const dd = hav(lat, lng, y, x); rings.forEach(r => { if (dd <= r) m[r]++; });
+    }
+    if (!n) { const dd = hav(lat, lng, b.cy, b.cx); rings.forEach(r => { if (dd <= r) out[r] += b.c; }); return; }
+    rings.forEach(r => out[r] += b.c * m[r] / n);
+  });
+  return out;
+}
+// ---------- analysis of one point (used by the panel, the candidate table and Claude's write-up) ----------
+const shortK = k => k.replace('Kabupaten ', 'Kab. ').replace('Kota Administrasi ', '');
+const cleanName = (o, b) => o[1].replace(new RegExp('^' + BR[b].strip, 'i'), '').replace(/^[\s\-–·|:]+/, '').trim() || o[1];
+function metricsAt(lat, lng){
+  const k = kecAt(lat, lng), pat = patientsIn(lat, lng, [3, 5]);
+  const au = D.branches.map(b => [hav(lat, lng, b.lat, b.lng), b]).sort((a, b) => a[0] - b[0]);
+  const per = {}; Object.keys(BR).forEach(b => per[b] = {r: {3: 0, 5: 0}, near: null, d: 1e9});
+  let dentNear = null, skinNear = null;
+  outlets.forEach(o => { const d = hav(lat, lng, o[2], o[3]), p = per[o[0]];
+    if (d <= 3) p.r[3]++; if (d <= 5) p.r[5]++; if (d < p.d) { p.d = d; p.near = o; }
+    if (BR[o[0]].dental) { if (!dentNear || d < dentNear.d) dentNear = {o, d}; } else if (!skinNear || d < skinNear.d) skinNear = {o, d}; });
+  const nd = !k || !!k.nd;
+  const sumR = (r, dental) => Object.keys(BR).filter(b => dental == null || BR[b].dental === dental).reduce((t, b) => t + per[b].r[r], 0);
+  const mlAll = D.malls.map(m => [hav(lat, lng, m[1], m[2]), m]).sort((a, b) => a[0] - b[0]);
+  const ml = mlAll.slice(0, 5), mlA = mlAll.find(x => x[1][8] === 'A') || null, mallA5 = mlAll.filter(x => x[0] <= 5 && x[1][8] === 'A').length, mallB5 = mlAll.filter(x => x[0] <= 5 && x[1][8] === 'B').length;
+  const life = {}; Object.keys(LM).forEach(c => life[c] = {n5: 0, near: null, d: 1e9});
+  D.life.forEach(x => { const d = hav(lat, lng, x[2], x[3]), l = life[x[0]]; if (d <= 5) l.n5++; if (d < l.d) { l.d = d; l.near = x; } });
+  const lifeNear = Object.keys(LM).map(c => ({c, ...life[c]})).filter(x => x.near).sort((a, b) => a.d - b.d);
+  return {lat, lng, k, pat, au, per, dentNear, skinNear, nd, comp3: sumR(3), comp5: sumR(5), dent3: sumR(3, true), dent5: sumR(5, true), ml, mlA, mallA5, mallB5, life, lifeNear};
+}
+// compact summary stored with a candidate and sent to Claude
+function summary(m){
+  const r1 = x => Math.round(x * 10) / 10;
+  return {kecamatan: m.k ? m.k.n : null, kota: m.k ? shortK(m.k.k) : null, pasien_3km: m.nd ? null : Math.round(m.pat[3]), pasien_5km: m.nd ? null : Math.round(m.pat[5]), pasien_kecamatan: m.k && !m.nd ? m.k.c : null, catatan_pasien: m.nd ? 'data pasien belum tersedia di luar Jawa-Bali' : undefined,
+    audy_terdekat: m.au[0] ? {nama: 'Audy ' + m.au[0][1].c + ' ' + m.au[0][1].n, km: r1(m.au[0][0])} : null, audy_dalam_5km: m.au.filter(x => x[0] <= 5).length,
+    klinik_gigi_kompetitor_terdekat: m.dentNear ? {nama: m.dentNear.o[1], brand: BR[m.dentNear.o[0]].name, km: r1(m.dentNear.d)} : null,
+    klinik_kulit_anak_terdekat: m.skinNear ? {nama: m.skinNear.o[1], brand: BR[m.skinNear.o[0]].name, km: r1(m.skinNear.d)} : null,
+    kompetitor_3km: m.comp3, kompetitor_5km: m.comp5, klinik_gigi_kompetitor_5km: m.dent5,
+    per_brand_5km: Object.fromEntries(Object.keys(BR).map(b => [BR[b].name, m.per[b].r[5]])),
+    mall_terdekat: m.ml.slice(0, 3).map(([d, x]) => ({nama: x[0], kelas: x[8], km: r1(d)})),
+    mall_kelas_A_terdekat: m.mlA ? {nama: m.mlA[1][0], km: r1(m.mlA[0])} : null, mall_kelas_A_5km: m.mallA5, mall_kelas_B_5km: m.mallB5,
+    lifestyle_terdekat: m.lifeNear.map(x => ({brand: LM[x.c].name, nama: x.near[1], km: r1(x.d), jumlah_5km: x.n5}))};
+}
+
+var MOVE_ID = null, CEDIT = null;
+function startMove(id){ MOVE_ID = id; CL_OPEN = true; renderClist(); }
+function analyse(lat, lng, label, zoom, keepView, note){
+  if (MOVE_ID) { const id = MOVE_ID, c = ST.cands.find(x => x.id === id); MOVE_ID = null;
+    if (c) { c.lat = +lat.toFixed(6); c.lng = +lng.toFixed(6); updCand(id, {lat: c.lat, lng: c.lng}); label = c.name; note = 'Titik kandidat dipindah ke sini.'; drawCandPins(); } }
+  last = {lat, lng, label, note};
+  if (L_me) map.removeLayer(L_me);
+  L_me = L.layerGroup().addTo(map);
+  RINGS.slice().sort((a, b) => b - a).forEach(r => {
+    const inner = RINGS.length > 1 && r === Math.min(...RINGS), col = css(inner ? '--accent' : '--accent2');
+    L.circle([lat, lng], {pane: 'ring', radius: r * 1000, color: col, weight: inner ? 2.5 : 2, dashArray: inner ? null : '7 5', fillColor: col, fillOpacity: inner ? .06 : .05}).addTo(L_me);
+    L.marker([lat + r / 110.574, lng], {pane: 'me', interactive: false, icon: L.divIcon({className: '', html: `<span class="ringlbl" style="border-color:${col};color:${col}">${r} km</span>`, iconSize: [44, 18], iconAnchor: [22, 9]})}).addTo(L_me);
+  });
+  L_line = null;
+  L.marker([lat, lng], {pane: 'me', icon: L.divIcon({className: '', html: '<div class="pinme"></div>', iconSize: [30, 30], iconAnchor: [15, 30]}), interactive: false}).addTo(L_me);
+  if (!keepView) map.fitBounds(L.latLng(lat, lng).toBounds(R * 2600), {maxZoom: 15});
+
+  const M = metricsAt(lat, lng); last.m = M;
+  const {k, pat, au, per} = M;
+  const auIn = au.filter(x => x[0] <= R).length;
+  const totR = r => r === 3 ? M.comp3 : M.comp5, dentR = r => r === 3 ? M.dent3 : M.dent5;
+  const gm = `https://www.google.com/maps/search/?api=1&query=${lat.toFixed(6)},${lng.toFixed(6)}`;
+  const gmd = `https://www.google.com/maps/search/klinik+gigi/@${lat.toFixed(6)},${lng.toFixed(6)},15z`;
+  const gmm = `https://www.google.com/maps/search/mall/@${lat.toFixed(6)},${lng.toFixed(6)},14z`;
+  const res = document.getElementById('res');
+  const cand = candAt(lat, lng);
+  res.innerHTML = `
+    <div style="display:grid;gap:3px"><h2>${esc(label)}</h2>
+      <div class="coord">${lat.toFixed(5)}, ${lng.toFixed(5)}${k ? ' · Kec. ' + esc(k.n) + ', ' + esc(shortK(k.k)) : ' · di luar wilayah data pasien'}</div>${note ? `<div class="hint">${esc(note)}</div>` : ''}${GEO_Q && ST.sample ? `<div class="ndnote" style="display:grid;gap:6px"><span>Titik ini baru setingkat ${esc(label.startsWith('Desa') ? 'desa/kelurahan' : 'kawasan/kecamatan/kota')}. Untuk titik alamat persis:</span><div class="tools"><button class="sbtn pri" type="button" id="geoBtn">Cari titik persis dengan Claude</button><span class="note">atau tempel koordinat dari Google Maps</span></div><div class="note" id="geoOut" hidden></div></div>` : ''}</div>
+    ${M.nd ? '<div class="ndnote">Data pasien Audy di luar Jawa–Bali belum tersedia di peta ini, jadi angka pasien kosong. Jarak ke klinik, kompetitor, mall dan lifestyle tetap dihitung.</div>' : ''}
+    <div class="big">
+      <div><b>${M.nd ? '–' : fmt(pat[R])}</b><span>perkiraan pasien Audy dalam ${R} km${RINGS.length > 1 && !M.nd ? ` · <strong>${fmt(pat[3])}</strong> dalam 3 km` : ''}</span></div>
+      <div><b>${k && !k.nd ? fmt(k.c) : '–'}</b><span>pasien di Kec. ${k ? esc(k.n) : '–'}</span></div>
+      <div><b>${au.length ? km(au[0][0]) : '–'}</b><span>ke cabang Audy terdekat${auIn ? ` · ${auIn} cabang dalam ${R} km` : ''}</span></div>
+      <div><b>${totR(R)}</b><span>outlet kompetitor dalam ${R} km (${dentR(R)} klinik gigi)${RINGS.length > 1 ? ` · <strong>${M.comp3}</strong> dalam 3 km` : ''}</span></div>
+    </div>
+    <div class="big">
+      <div><b>${M.dentNear ? (M.dentNear.o[7] === 1 ? '≈' : '') + km(M.dentNear.d) : '–'}</b><span>klinik gigi kompetitor terdekat${M.dentNear ? ' · ' + esc(M.dentNear.o[1]) : ''}</span></div>
+      <div><b>${M.lifeNear[0] ? km(M.lifeNear[0].d) : '–'}</b><span>brand lifestyle terdekat${M.lifeNear[0] ? ' · ' + esc(LM[M.lifeNear[0].c].name) : ''}</span></div>
+      <div><b>${M.mlA ? km(M.mlA[0]) : '–'}</b><span>mall kelas A terdekat${M.mlA ? ' · ' + esc(M.mlA[1][0]) : ''}</span></div>
+      <div><b>${M.mallA5} A · ${M.mallB5} B</b><span>mall dalam 5 km</span></div>
+    </div>
+    <div id="candBox">${candBoxHtml(cand, label)}</div>
+    <div class="links"><a href="${gm}" target="_blank" rel="noopener">Buka titik di Google Maps</a><a href="${gmd}" target="_blank" rel="noopener">Klinik gigi sekitar</a><a href="${gmm}" target="_blank" rel="noopener">Mall sekitar</a></div>
+    <div class="meas" id="meas"><b>Ukur jarak:</b> arahkan kursor ke ikon untuk melihat lingkar 3/5 km-nya. Klik ikon atau baris di daftar bawah untuk menarik garis jarak. Klik area kosong di peta untuk memindah titik.</div>
+    <h3>Cabang Audy terdekat</h3>
+    <div class="rows">${au.slice(0, 3).map(([d, b]) => `<div class="row" data-lat="${b.lat}" data-lng="${b.lng}" data-name="${esc('Audy ' + b.c + ' · ' + b.n)}"><span class="mk audy lg">${esc(b.c)}</span><span class="nm"><b>${esc(b.n)}</b><small>Kec. ${esc(b.kec)}</small></span><span class="km">${km(d)}</span></div>`).join('')}</div>
+    <h3>Kompetitor · jumlah outlet per lingkar dan outlet terdekat</h3>
+    <table class="btab"><thead><tr><th></th><th>Brand</th>${RINGS.map(r => `<th class="r">≤${r} km</th>`).join('')}<th>Terdekat</th><th class="r">Jarak</th></tr></thead><tbody>${Object.keys(BR).map(b => { const p = per[b]; return `<tr class="${p.r[R] ? '' : 'zero'}" ${p.near ? `data-lat="${p.near[2]}" data-lng="${p.near[3]}" data-name="${esc(p.near[1])}"` : ''}>
+      <td><span class="mk lg${BR[b].shape === 'sq' ? ' sq' : ''}" style="background:${BR[b].color}">${BR[b].code}</span></td>
+      <td>${esc(BR[b].name)}</td>${RINGS.map(r => `<td class="r"><b>${p.r[r]}</b></td>`).join('')}
+      <td class="nr" title="${p.near ? esc(p.near[1]) : ''}">${p.near ? esc(cleanName(p.near, b)) : 'tidak ada data'}</td>
+      <td class="r">${p.near ? (p.near[7] === 1 ? '≈' : '') + km(p.d) : '–'}</td></tr>`; }).join('')}</tbody></table>
+    <h3>Brand lifestyle terdekat</h3>
+    <table class="btab"><thead><tr><th></th><th>Brand</th><th class="r">≤5 km</th><th>Terdekat</th><th class="r">Jarak</th></tr></thead><tbody>${Object.keys(LM).map(c => { const l = M.life[c]; return `<tr class="${l.n5 ? '' : 'zero'}" ${l.near ? `data-lat="${l.near[2]}" data-lng="${l.near[3]}" data-name="${esc(l.near[1])}"` : ''}>
+      <td><span class="lifemk" style="background:${LM[c].color}">${LM[c].code}</span></td><td>${esc(LM[c].name)}</td><td class="r"><b>${l.n5}</b></td>
+      <td class="nr" title="${l.near ? esc(l.near[1]) : ''}">${l.near ? esc(l.near[1]) : 'tidak ada data'}</td><td class="r">${l.near ? km(l.d) : '–'}</td></tr>`; }).join('')}</tbody></table>
+    <h3>Mall terdekat</h3>
+    <div class="rows">${M.ml.map(([d, m]) => `<div class="row" data-lat="${m[1]}" data-lng="${m[2]}" data-name="${esc(m[0])}"><span class="mk ${m[8] === 'A' ? 'mallA' : 'mall'} lg">${m[8]}</span><span class="nm"><b>${esc(m[0])}</b><small>${esc([m[3] && 'Kec. ' + m[3], m[4]].filter(Boolean).join(' · '))}</small></span><span class="km">${km(d)}</span></div>`).join('')}</div>`;
+  res.querySelectorAll('[data-lat]').forEach(el => { el.addEventListener('click', () => measure(+el.dataset.lat, +el.dataset.lng, el.dataset.name || '', true));
+    let ht = null; el.addEventListener('mouseenter', () => { clearTimeout(ht); ht = setTimeout(() => hoverRings(+el.dataset.lat, +el.dataset.lng, '#e11d48'), HOVER_DELAY); }); el.addEventListener('mouseleave', () => { clearTimeout(ht); clearHover(); }); });
+  const gb = document.getElementById('geoBtn'); if (gb) { const q = GEO_Q; gb.onclick = () => claudeGeocode(q, gb); } GEO_Q = '';
+  wireCandBox(); if (typeof renderClist === 'function' && ST.cands.length) renderClist();
+  if (window.matchMedia('(max-width:1000px)').matches && !keepView) res.scrollIntoView({behavior: 'smooth', block: 'start'});
+}
+
+// ---------- candidates: shared store (db) with a per-browser fallback ----------
+const ST = {mode: 'loading', cands: [], dec: {}, me: null, canWrite: true, canApprove: false, names: {}, db: null, user: null};
+const statusOf = c => (ST.dec[c.id] && ST.dec[c.id].status) || 'pending';
+const ST_LBL = {pending: 'Menunggu approval', ok: 'Disetujui', no: 'Ditolak'};
+function candAt(lat, lng){ return ST.cands.find(c => Math.abs(c.lat - lat) < 1e-6 && Math.abs(c.lng - lng) < 1e-6) || null; }
+function candNo(c){ return ST.cands.indexOf(c) + 1; }
+function candBoxHtml(c, label){
+  if (c) { const s = statusOf(c), dd = ST.dec[c.id];
+    return `<div class="form"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><b>Kandidat K${candNo(c)} · ${esc(c.name)}</b><span class="st ${s}">${ST_LBL[s]}</span></div>
+      ${c.note ? `<div class="note">${esc(c.note)}</div>` : ''}${dd && dd.note ? `<div class="note">Catatan keputusan: ${esc(dd.note)}</div>` : ''}
+      <div class="tools">${ST.canWrite ? `<button class="sbtn" type="button" data-ced="${c.id}">Edit</button><button class="sbtn" type="button" data-cmv="${c.id}">Pindahkan titik</button>` : ''}${ST.canApprove ? `<button class="sbtn ok" type="button" data-dec="ok" data-id="${c.id}">Setujui</button><button class="sbtn no" type="button" data-dec="no" data-id="${c.id}">Tolak</button>${s !== 'pending' ? `<button class="sbtn" type="button" data-dec="pending" data-id="${c.id}">Kembalikan ke menunggu</button>` : ''}` : '<span class="note">Hanya Editor/Owner artefak yang bisa menyetujui.</span>'}<a class="sbtn" href="#kandidat">Lihat perbandingan</a></div></div>`; }
+  if (!ST.canWrite) return '';
+  return `<div class="form"><b>Simpan titik ini sebagai kandidat</b>
+    <label>Nama kandidat<input id="cName" type="text" maxlength="80" value="${esc(label.replace(/^Koordinat .*/, '').replace(/^Titik (pilihan|di )/, ''))}" placeholder="mis. Lippo Cikarang – The Hive"></label>
+    <label>Catatan (opsional)<textarea id="cNote" maxlength="500" placeholder="mis. unit 120 m², sewa Rp…/bulan, lantai dasar"></textarea></label>
+    <div class="tools"><button class="sbtn pri" type="button" id="cSave">+ Jadikan kandidat</button><span class="note" id="cMsg"></span></div></div>`;
+}
+function wireCandBox(){
+  const sv = document.getElementById('cSave');
+  if (sv) sv.onclick = async () => { const nm = document.getElementById('cName').value.trim() || last.label; sv.disabled = true;
+    const ok = await addCand(nm, document.getElementById('cNote').value.trim(), last.lat, last.lng, last.m);
+    if (!ok) { sv.disabled = false; document.getElementById('cMsg').textContent = 'Gagal menyimpan. Coba lagi.'; } };
+  document.querySelectorAll('#candBox [data-dec]').forEach(b => b.onclick = () => decide(b.dataset.id, b.dataset.dec));
+  document.querySelectorAll('#candBox [data-ced]').forEach(b => b.onclick = () => { CEDIT = b.dataset.ced; CL_OPEN = true; renderClist(); document.getElementById('clistCard').scrollIntoView({block: 'nearest'}); });
+  document.querySelectorAll('#candBox [data-cmv]').forEach(b => b.onclick = () => startMove(b.dataset.cmv));
+}
+async function addCand(name, note, lat, lng, m){
+  const doc = {name, note, lat: +lat.toFixed(6), lng: +lng.toFixed(6), by: ST.me, at: new Date().toISOString(), m: summary(m || metricsAt(lat, lng))};
+  try {
+    if (ST.mode === 'db') await ST.db.collection('kandidat').add(doc);
+    else { doc.id = 'L' + Date.now().toString(36); ST.cands.push(doc); saveLocal(); onCands(); }
+    return true;
+  } catch (e) { if (e && e.code === 'invalid_argument') { ST.canWrite = false; renderCands(); } return false; }
+}
+async function updCand(id, f){
+  const c = ST.cands.find(x => x.id === id); if (!c) return false;
+  if (f.lat != null) f.m = summary(metricsAt(f.lat, f.lng));
+  f.editedBy = ST.me; f.editedAt = new Date().toISOString();
+  try { if (ST.mode === 'db') await ST.db.doc('kandidat/' + id).update(f); else { Object.assign(c, f); saveLocal(); onCands(); } return true; }
+  catch (e) { return false; }
+}
+async function delCand(id){
+  const c = ST.cands.find(x => x.id === id); if (!c) return;
+  try { if (ST.mode === 'db') { await ST.db.doc('kandidat/' + id).delete(); if (ST.canApprove) await ST.db.doc('keputusan/' + id).delete().catch(() => {}); }
+    else { ST.cands = ST.cands.filter(x => x.id !== id); delete ST.dec[id]; saveLocal(); onCands(); } } catch (e) {}
+}
+async function decide(id, status){
+  const note = status === 'pending' ? '' : (document.getElementById('dn_' + id)?.value || '').trim();
+  const body = {status, by: ST.me, at: new Date().toISOString(), note};
+  try { if (ST.mode === 'db') await ST.db.doc('keputusan/' + id).set(body); else { ST.dec[id] = body; saveLocal(); onCands(); } } catch (e) {}
+}
+function saveLocal(){ try { localStorage.setItem('audyKandidat', JSON.stringify({c: ST.cands, d: ST.dec})); } catch (e) {} }
+function loadLocal(){ try { const v = JSON.parse(localStorage.getItem('audyKandidat') || 'null'); if (v) { ST.cands = v.c || []; ST.dec = v.d || {}; } } catch (e) {} }
+
+const L_cand = L.layerGroup().addTo(map);
+let HID = new Set(); try { HID = new Set(JSON.parse(localStorage.getItem('audyHidden') || '[]')); } catch (e) {}
+let CL_OPEN = true; try { CL_OPEN = localStorage.getItem('audyClist') !== '0'; } catch (e) {}
+const saveHid = () => { try { localStorage.setItem('audyHidden', JSON.stringify([...HID])); } catch (e) {} };
+function renderClist(){
+  const card = document.getElementById('clistCard'), open = document.getElementById('clOpen');
+  const vis = ST.cands.filter(c => !HID.has(c.id)), nh = ST.cands.length - vis.length;
+  card.hidden = !ST.cands.length || !CL_OPEN; open.hidden = !ST.cands.length || CL_OPEN;
+  document.getElementById('clist').innerHTML = vis.map(c => { const i = ST.cands.indexOf(c), s = statusOf(c), M = candMetrics(c);
+    const on = last && Math.abs(last.lat - c.lat) < 1e-6 && Math.abs(last.lng - c.lng) < 1e-6;
+    return `<div class="ci${on ? ' on' : ''}" data-id="${c.id}" title="${esc(c.name)}"><span class="kno ${s}">K${i + 1}</span><span class="t"><b>${esc(c.name)}</b><small>${M.nd ? 'tanpa data pasien' : fmt(M.pat[5]) + ' pasien ≤5 km'} · Audy ${km(M.au[0][0])} · ${ST_LBL[s]}</small></span><span class="acts2">${ST.canWrite ? `<button class="xbtn" type="button" data-e="${c.id}" aria-label="Edit K${i + 1}" title="Edit nama, catatan, titik">✎</button>` : ''}<button class="xbtn" type="button" data-x="${c.id}" aria-label="${ST.canWrite ? 'Hapus' : 'Sembunyikan'} K${i + 1}" title="${ST.canWrite ? 'Hapus kandidat' : 'Sembunyikan dari layar'}">×</button></span></div>${CEDIT === c.id ? candEditHtml(c, i) : ''}${XCONF === c.id ? `<div class="movebar">Hapus K${i + 1} · ${esc(c.name)} dari daftar approval? <button class="sbtn no" type="button" data-xy="${c.id}">Ya, hapus</button><button class="sbtn" type="button" data-xn="1">Batal</button></div>` : ''}`; }).join('') || '<div class="note">Semua kandidat disembunyikan.</div>';
+  const mv = MOVE_ID && ST.cands.find(x => x.id === MOVE_ID);
+  if (mv) document.getElementById('clist').insertAdjacentHTML('afterbegin', `<div class="movebar">Klik di peta, cari alamat, atau tempel koordinat Google Maps untuk memindah <b>K${ST.cands.indexOf(mv) + 1} · ${esc(mv.name)}</b>. <button class="sbtn" type="button" id="mvX">Batal</button></div>`);
+  const mvX = document.getElementById('mvX'); if (mvX) mvX.onclick = () => { MOVE_ID = null; renderClist(); };
+  document.getElementById('clHidden').innerHTML = nh ? `${nh} kandidat disembunyikan · <button class="linkish" type="button" id="clShow">tampilkan lagi</button>` : '';
+  document.querySelectorAll('#clist .ci').forEach(el => el.onclick = e => { if (e.target.closest('[data-x],[data-e]')) return; const c = ST.cands.find(x => x.id === el.dataset.id); analyse(c.lat, c.lng, c.name); });
+  document.querySelectorAll('#clist [data-e]').forEach(b => b.onclick = () => { CEDIT = CEDIT === b.dataset.e ? null : b.dataset.e; XCONF = null; renderClist(); });
+  document.querySelectorAll('#clist [data-xn]').forEach(b => b.onclick = () => { XCONF = null; renderClist(); });
+  document.querySelectorAll('#clist [data-xy]').forEach(b => b.onclick = async () => { const id = b.dataset.xy; b.disabled = true; XCONF = null;
+    const c = ST.cands.find(x => x.id === id); if (last && c && Math.abs(last.lat - c.lat) < 1e-6 && Math.abs(last.lng - c.lng) < 1e-6) clearPoint(); await delCand(id); renderClist(); });
+  wireCandEdit();
+  document.querySelectorAll('#clist [data-x]').forEach(b => b.onclick = () => { if (ST.canWrite) { XCONF = b.dataset.x; CEDIT = null; renderClist(); return; } HID.add(b.dataset.x); saveHid(); clearHover();
+    if (last) { const c = ST.cands.find(x => x.id === b.dataset.x); if (c && Math.abs(last.lat - c.lat) < 1e-6 && Math.abs(last.lng - c.lng) < 1e-6) clearPoint(); } drawCandPins(); renderClist(); });
+  const sh = document.getElementById('clShow'); if (sh) sh.onclick = () => { HID.clear(); saveHid(); drawCandPins(); renderClist(); };
+}
+var XCONF = null;
+function candEditHtml(c, i){
+  return `<div class="cedit"><b style="font-size:12.5px">Edit K${i + 1}</b>
+    <label>Nama<input id="ce_n" type="text" maxlength="80" value="${esc(c.name)}"></label>
+    <label>Catatan<textarea id="ce_no" rows="2" maxlength="500">${esc(c.note || '')}</textarea></label>
+    <div class="two"><label>Latitude<input id="ce_la" type="text" inputmode="decimal" value="${c.lat}"></label><label>Longitude<input id="ce_lo" type="text" inputmode="decimal" value="${c.lng}"></label></div>
+    <div class="acts" style="justify-content:flex-start"><button class="sbtn pri" type="button" id="ce_s">Simpan</button><button class="sbtn" type="button" id="ce_mv">Pindahkan lewat peta</button><button class="sbtn" type="button" id="ce_x">Batal</button><span class="note" id="ce_msg"></span></div></div>`;
+}
+function wireCandEdit(){
+  const $ = x => document.getElementById(x); if (!$('ce_s')) return; const id = CEDIT;
+  $('ce_x').onclick = () => { CEDIT = null; renderClist(); };
+  $('ce_mv').onclick = () => { CEDIT = null; startMove(id); };
+  $('ce_s').onclick = async () => {
+    const la = parseFloat(String($('ce_la').value).replace(',', '.')), lo = parseFloat(String($('ce_lo').value).replace(',', '.'));
+    if (!isFinite(la) || !isFinite(lo) || la < -11.5 || la > 6.5 || lo < 94.5 || lo > 141.5) { $('ce_msg').textContent = 'Koordinat tidak valid.'; return; }
+    const c = ST.cands.find(x => x.id === id), f = {name: $('ce_n').value.trim() || c.name, note: $('ce_no').value.trim()};
+    if (Math.abs(la - c.lat) > 1e-7 || Math.abs(lo - c.lng) > 1e-7) { f.lat = +la.toFixed(6); f.lng = +lo.toFixed(6); }
+    $('ce_s').disabled = true; $('ce_msg').textContent = 'Menyimpan…';
+    const ok = await updCand(id, f);
+    if (!ok) { $('ce_s').disabled = false; $('ce_msg').textContent = 'Gagal menyimpan. Anda mungkin tidak punya izin mengubah.'; return; }
+    CEDIT = null; Object.assign(c, f); drawCandPins(); renderClist(); if (f.lat != null || (last && last.label === c.name)) analyse(c.lat, c.lng, c.name);
+  };
+}
+function clearPoint(){ if (L_me) { map.removeLayer(L_me); L_me = null; } last = null; document.getElementById('res').innerHTML = EMPTY_RES; wireExamples(); }
+document.getElementById('clClose').onclick = () => { CL_OPEN = false; try { localStorage.setItem('audyClist', '0'); } catch (e) {} renderClist(); };
+document.getElementById('clOpen').onclick = () => { CL_OPEN = true; try { localStorage.setItem('audyClist', '1'); } catch (e) {} renderClist(); };
+function drawCandPins(){
+  L_cand.clearLayers();
+  ST.cands.forEach((c, i) => { const s = statusOf(c); if (HID.has(c.id)) return;
+    L.marker([c.lat, c.lng], {pane: 'cand', icon: L.divIcon({className: '', html: `<div class="candpin ${s}"><b>K${i + 1}</b></div>`, iconSize: [30, 30], iconAnchor: [15, 30]})})
+      .bindTooltip(distTip(`<strong>K${i + 1} · ${esc(c.name)}</strong><br><small>${ST_LBL[s]}</small>`, c.lat, c.lng), {className: 'tip'})
+      .on('click', () => analyse(c.lat, c.lng, c.name)).ring(c.lat, c.lng, '#d97706').addTo(L_cand); });
+}
+const mcache = new Map();
+function candMetrics(c){ const key = c.lat + ',' + c.lng; if (!mcache.has(key)) mcache.set(key, metricsAt(c.lat, c.lng)); return mcache.get(key); }
+async function renderCands(){
+  document.getElementById('navc').textContent = ST.cands.length;
+  const note = document.getElementById('storeNote'), wrap = document.getElementById('candWrap');
+  note.textContent = ST.mode === 'db' ? `${ST.cands.length} kandidat · tersimpan bersama untuk semua yang membuka halaman ini${ST.canApprove ? ' · Anda bisa menyetujui' : ''}.`
+    : ST.mode === 'local' ? 'Penyimpanan bersama tidak tersedia di tampilan ini. Kandidat hanya tersimpan di browser ini dan tidak terlihat orang lain.' : 'Memuat daftar kandidat…';
+  if (!ST.cands.length) { wrap.innerHTML = `<div class="empty"><p>Belum ada kandidat. Cari lokasi di atas (alamat, mall, koordinat) lalu klik <b>+ Jadikan kandidat</b>, atau pakai tombol <b>+ Kandidat</b> di tabel master data.</p></div>`; document.getElementById('aiBtn').hidden = true; return; }
+  if (ST.mode === 'db' && ST.user) { const ids = [...new Set(ST.cands.map(c => c.by).concat(Object.values(ST.dec).map(d => d.by)).filter(Boolean))]; try { ST.names = await ST.user.profiles(ids); } catch (e) {} }
+  const who = id => (id && ST.names[id] && ST.names[id].name) || '';
+  const lifeCell = M => `<div class="lifechips">${M.lifeNear.slice(0, 5).map(x => `<span title="${esc(x.near[1])}"><i style="background:${LM[x.c].color}">${LM[x.c].code}</i>${km(x.d)}</span>`).join('') || '–'}</div>`;
+  wrap.innerHTML = `<div class="tbl"><table><thead><tr><th>#</th><th>Kandidat</th><th class="r">Pasien ≤3 km</th><th class="r">Pasien ≤5 km</th><th>Audy terdekat</th><th>Klinik gigi kompetitor terdekat</th><th class="r">Kompetitor ≤5 km<br>(gigi / total)</th><th>Mall terdekat</th><th>Mall kelas A terdekat</th><th>Lifestyle terdekat</th><th>Status</th><th class="r">Aksi</th></tr></thead><tbody>
+    ${ST.cands.map((c, i) => { const M = candMetrics(c), s = statusOf(c), dd = ST.dec[c.id];
+      return `<tr data-id="${c.id}">
+        <td class="num"><b>K${i + 1}</b></td>
+        <td class="cn"><b>${esc(c.name)}</b><small>${M.k ? 'Kec. ' + esc(M.k.n) + ', ' + esc(shortK(M.k.k)) : ''}</small>${c.note ? `<small>${esc(c.note)}</small>` : ''}<small>${who(c.by) ? 'oleh ' + esc(who(c.by)) + ' · ' : ''}${esc((c.at || '').slice(0, 10))}</small></td>
+        <td class="num">${M.nd ? '–' : fmt(M.pat[3])}</td><td class="num"><b>${M.nd ? '–' : fmt(M.pat[5])}</b></td>
+        <td>${M.au[0] ? `${esc(M.au[0][1].c + ' ' + M.au[0][1].n)}<small>${km(M.au[0][0])}</small>` : '–'}</td>
+        <td>${M.dentNear ? `${esc(M.dentNear.o[1])}<small>${M.dentNear.o[7] === 1 ? '≈' : ''}${km(M.dentNear.d)}</small>` : '–'}</td>
+        <td class="num">${M.dent5} / ${M.comp5}</td>
+        <td>${M.ml[0] ? `${esc(M.ml[0][1][0])}${mallTag(M.ml[0][1])}<small>${km(M.ml[0][0])} · ${M.mallA5} A / ${M.mallB5} B dalam 5 km</small>` : '–'}</td>
+        <td>${M.mlA ? `${esc(M.mlA[1][0])}<small>${km(M.mlA[0])}</small>` : '–'}</td>
+        <td>${lifeCell(M)}</td>
+        <td><span class="st ${s}">${ST_LBL[s]}</span>${dd && dd.by && s !== 'pending' ? `<small>${who(dd.by) ? esc(who(dd.by)) + ' · ' : ''}${esc((dd.at || '').slice(0, 10))}</small>` : ''}${dd && dd.note ? `<small>${esc(dd.note)}</small>` : ''}
+          ${ST.canApprove ? `<input id="dn_${c.id}" type="text" placeholder="catatan keputusan" style="margin-top:4px;font:inherit;font-size:11.5px;padding:3px 6px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--fg);width:100%">` : ''}</td>
+        <td><div class="acts"><button class="sbtn" type="button" data-act="view">Lihat</button>${ST.canWrite ? '<button class="sbtn" type="button" data-act="edit">Edit</button>' : ''}${ST.canApprove ? `<button class="sbtn ok" type="button" data-act="ok">Setujui</button><button class="sbtn no" type="button" data-act="no">Tolak</button>` : ''}${ST.canWrite ? `<button class="sbtn" type="button" data-act="del">Hapus</button>` : ''}</div></td></tr>`; }).join('')}
+  </tbody></table></div>`;
+  wrap.querySelectorAll('tr[data-id]').forEach(tr => tr.querySelectorAll('[data-act]').forEach(b => b.onclick = () => {
+    const id = tr.dataset.id, c = ST.cands.find(x => x.id === id), a = b.dataset.act;
+    if (a === 'view') { if (HID.has(id)) { HID.delete(id); saveHid(); drawCandPins(); } analyse(c.lat, c.lng, c.name); document.getElementById('peta').scrollIntoView({behavior: 'smooth'}); }
+    else if (a === 'edit') { CEDIT = id; CL_OPEN = true; renderClist(); analyse(c.lat, c.lng, c.name); document.getElementById('peta').scrollIntoView({behavior: 'smooth'}); }
+    else if (a === 'del') { if (b.dataset.confirm) delCand(id); else { b.dataset.confirm = '1'; b.textContent = 'Yakin hapus?'; setTimeout(() => { if (b.isConnected) { delete b.dataset.confirm; b.textContent = 'Hapus'; } }, 4000); } }
+    else decide(id, a); }));
+  document.getElementById('aiBtn').hidden = !ST.sample;
+}
+function onCands(){ drawCandPins(); renderCands(); renderClist(); if (last) { const box = document.getElementById('candBox'); if (box) { box.innerHTML = candBoxHtml(candAt(last.lat, last.lng), last.label); wireCandBox(); } } }
+
+(async function initStore(){
+  const use = window.claude && window.claude.use ? n => window.claude.use(n).catch(() => null) : async () => null;
+  const [db, user, sample] = await Promise.all([use('db'), use('user'), use('sample')]);
+  ST.user = user; ST.sample = sample;
+  if (user) { try { ST.me = await user.id(); ST.canApprove = await user.canEdit(); const w = await user.can('data.write'); if (w === false) ST.canWrite = false; } catch (e) {} }
+  if (!db) { ST.mode = 'local'; ST.canApprove = true; ST.canWrite = true; loadLocal(); onCands(); return; }
+  ST.db = db; ST.mode = 'db';
+  const timer = setTimeout(() => { document.getElementById('storeNote').textContent = 'Daftar kandidat belum bisa dimuat. Periksa koneksi; daftar akan muncul sendiri begitu tersambung.'; }, 10000);
+  db.collection('kandidat').orderBy('at').onSnapshot(snap => { if (!snap.metadata.fromCache) clearTimeout(timer); ST.cands = snap.docs.map(d => ({id: d.id, ...d.data()})); onCands(); },
+    e => { clearTimeout(timer); document.getElementById('storeNote').textContent = 'Daftar kandidat tidak bisa dimuat di tampilan ini.'; });
+  db.collection('mall').onSnapshot(snap => { if (!snap.size) return; MALL.docs = snap.docs.map(d => ({id: d.id, ...d.data()})); applyMallDocs(); }, () => {});
+  db.collection('keputusan').onSnapshot(snap => { const m = {}; snap.docs.forEach(d => m[d.id] = d.data()); ST.dec = m; onCands(); }, () => {});
+})();
+
+// ---------- Claude's comparison of all candidates ----------
+document.getElementById('aiBtn').addEventListener('click', async () => {
+  const box = document.getElementById('aiBox'), btn = document.getElementById('aiBtn');
+  if (!ST.sample || !ST.cands.length) return;
+  const rows = ST.cands.map((c, i) => ({kode: 'K' + (i + 1), nama: c.name, catatan: c.note || '', status: ST_LBL[statusOf(c)], ...summary(candMetrics(c))}));
+  const prompt = `Anda analis pengembangan bisnis Audy Dental, jaringan klinik gigi di Indonesia (70 cabang). Berikut data kandidat lokasi cabang baru, dihitung dari peta internal: pasien Audy yang tinggal dalam 3 dan 5 km (perkiraan), jarak ke cabang Audy terdekat (risiko kanibalisasi bila < 3 km), kompetitor klinik gigi (Satu Dental, FDC, OMDC, Damesa, Sozo Dental) dan klinik kulit/anak (Erha, Natasha, ZAP, Sozo Skin, Medikids), mall terdekat, dan brand lifestyle terdekat (Starbucks, Uniqlo, McDonald's, KFC, Pizza Hut) sebagai penanda daya beli dan keramaian.
+
+DATA (JSON):
+${JSON.stringify(rows)}
+
+Tulis analisa singkat dalam Bahasa Indonesia untuk bahan approval manajemen, teks biasa tanpa markdown (tanpa tanda #, * atau tabel):
+1. Satu paragraf per kandidat: kekuatan, risiko (kanibalisasi, kompetisi, pasien sedikit), dan angka kunci yang dipakai.
+2. Urutan rekomendasi dari yang paling layak, dengan alasan satu kalimat masing-masing.
+3. Hal yang perlu dicek di lapangan sebelum keputusan.
+Jangan mengarang angka di luar data. Sebutkan bahwa jumlah pasien adalah perkiraan.`;
+  box.hidden = false; box.innerHTML = '<div class="ai" id="aiText">Claude sedang menganalisa…</div>'; btn.disabled = true;
+  try { const r = await ST.sample(prompt, {modelTier: 'default', onText: ({text}) => { document.getElementById('aiText').textContent = text; }});
+    document.getElementById('aiText').textContent = r.text; }
+  catch (e) { document.getElementById('aiText').textContent = e && e.code === 'not_granted' ? 'Izin untuk bertanya ke Claude tidak diberikan di tampilan ini.' : e && e.code === 'rate_limited' ? 'Terlalu banyak permintaan. Coba lagi beberapa menit lagi.' : 'Analisa gagal dibuat. Coba lagi.'; if (e && e.code === 'not_granted') btn.hidden = true; }
+  btn.disabled = false;
+});
+
+// ---------- master data ----------
+const MT = {tab: 'mall', q: '', city: '', sort: null, dir: 1, limit: 60};
+const nearAudy = (lat, lng) => D.branches.reduce((b, x) => { const d = hav(lat, lng, x.lat, x.lng); return d < b[0] ? [d, x] : b; }, [1e9, null]);
+const comp5At = (lat, lng) => { let n = 0, g = 0; outlets.forEach(o => { if (hav(lat, lng, o[2], o[3]) <= 5) { n++; if (BR[o[0]].dental) g++; } }); return [n, g]; };
+let MROWS = null;
+const MALL = {docs: null, edit: null};
+const toRow = d => [d.n, d.lat, d.lng, d.kec || '', d.kota || '', d.src == null ? 1 : d.src, d.p3 || 0, d.p5 || 0, d.cls === 'A' ? 'A' : 'B', d.why || '', d.id, d.note || ''];
+function applyMallDocs(){
+  D.malls = MALL.docs.filter(d => d.active !== false && isFinite(d.lat) && isFinite(d.lng)).map(toRow);
+  drawMalls(); MROWS = null; mcache.clear();
+  for (let i = gaz.length - 1; i >= 0; i--) if (gaz[i].kind === 'Mall') gaz.splice(i, 1);
+  D.malls.forEach(m => { const g = {t: m[0], nm: norm(m[0]), par: m[4] ? parOf(m[4]) : '', s: 'Mall kelas ' + m[8] + (m[4] ? ' · ' + m[4] : ''), lat: m[1], lng: m[2], kind: 'Mall'}; g.k = norm(g.t + ' ' + g.s); gaz.push(g); });
+  renderMaster(); renderCands(); renderClist();
+  if (last) analyse(last.lat, last.lng, last.label, null, true, last.note);
+}
+const canEditMall = () => ST.mode === 'db' && ST.canApprove;
+async function saveMall(id, f){
+  const old = (MALL.docs || []).find(d => d.id === id) || {};
+  const moved = !old.id || Math.abs((old.lat || 0) - f.lat) > 1e-6 || Math.abs((old.lng || 0) - f.lng) > 1e-6;
+  const doc = Object.assign({}, old, f, {by: ST.me, at: new Date().toISOString(), active: true});
+  delete doc.id;
+  if (moved) { const k = kecAt(f.lat, f.lng); const p = patientsIn(f.lat, f.lng, [3, 5]); doc.p3 = k && !k.nd ? Math.round(p[3]) : 0; doc.p5 = k && !k.nd ? Math.round(p[5]) : 0; doc.src = 3; if (!f.kec && k) doc.kec = k.n; if (!f.kota && k) doc.kota = k.k; }
+  await ST.db.doc('mall/' + id).set(doc);
+}
+async function setMallActive(id, active){ const old = (MALL.docs || []).find(d => d.id === id); if (!old) return; const doc = Object.assign({}, old, {active, by: ST.me, at: new Date().toISOString()}); delete doc.id; await ST.db.doc('mall/' + id).set(doc); }
+function mallForm(r){
+  const v = r || {name: '', cls: 'B', kec: '', kota: '', lat: last ? +last.lat.toFixed(6) : '', lng: last ? +last.lng.toFixed(6) : '', note: ''};
+  return `<div class="mform">
+    <label class="wide">Nama mall<input id="mf_n" type="text" maxlength="100" value="${esc(v.name)}"></label>
+    <label>Kelas<select id="mf_c"><option value="A"${v.cls === 'A' ? ' selected' : ''}>A</option><option value="B"${v.cls !== 'A' ? ' selected' : ''}>B</option></select></label>
+    <label>Kecamatan<input id="mf_k" type="text" maxlength="60" value="${esc(v.kec || '')}"></label>
+    <label>Kota/Kab.<input id="mf_t" type="text" maxlength="60" value="${esc(v.kota || '')}"></label>
+    <label>Latitude<input id="mf_la" type="text" inputmode="decimal" value="${v.lat}"></label>
+    <label>Longitude<input id="mf_lo" type="text" inputmode="decimal" value="${v.lng}"></label>
+    <label class="wide">Catatan<input id="mf_no" type="text" maxlength="200" value="${esc(v.note || '')}" placeholder="mis. alasan ubah kelas"></label>
+    <div class="acts" style="grid-column:1/-1;justify-content:flex-start"><button class="sbtn pri" type="button" id="mf_save">Simpan</button>${last ? '<button class="sbtn" type="button" id="mf_pt">Pakai titik yang sedang dianalisa</button>' : ''}${r ? '<button class="sbtn no" type="button" id="mf_del">Hapus dari daftar</button>' : ''}<button class="sbtn" type="button" id="mf_x">Batal</button><span class="note" id="mf_msg"></span></div></div>`;
+}
+function wireMallForm(id, isNew){
+  const $ = x => document.getElementById(x), msg = t => { $('mf_msg').textContent = t; };
+  $('mf_x').onclick = () => { MALL.edit = null; renderMaster(); };
+  if ($('mf_pt')) $('mf_pt').onclick = () => { $('mf_la').value = last.lat.toFixed(6); $('mf_lo').value = last.lng.toFixed(6); const k = kecAt(last.lat, last.lng); if (k) { $('mf_k').value = k.n; $('mf_t').value = k.k; } };
+  if ($('mf_del')) $('mf_del').onclick = async () => { const b = $('mf_del'); if (!b.dataset.c) { b.dataset.c = 1; b.textContent = 'Yakin hapus?'; return; } try { await setMallActive(id, false); MALL.edit = null; } catch (e) { msg('Gagal menghapus.'); } };
+  $('mf_save').onclick = async () => {
+    const lat = parseFloat(String($('mf_la').value).replace(',', '.')), lng = parseFloat(String($('mf_lo').value).replace(',', '.')), n = $('mf_n').value.trim();
+    if (!n) return msg('Nama mall wajib diisi.'); if (!isFinite(lat) || !isFinite(lng) || Math.abs(lat) > 12 || lng < 94 || lng > 142) return msg('Koordinat tidak valid. Contoh: -6.2440, 106.7836');
+    $('mf_save').disabled = true; msg('Menyimpan…');
+    try { await saveMall(id, {n, cls: $('mf_c').value, kec: $('mf_k').value.trim(), kota: $('mf_t').value.trim(), lat: +lat.toFixed(6), lng: +lng.toFixed(6), note: $('mf_no').value.trim(), why: isNew ? 'ditambah tim' : undefined}); MALL.edit = null; }
+    catch (e) { $('mf_save').disabled = false; msg(e && e.code === 'invalid_argument' ? 'Anda tidak punya izin mengubah data mall.' : 'Gagal menyimpan. Coba lagi.'); }
+  };
+}
+function masterRows(){
+  if (MROWS) return MROWS;
+  const kotaOf = (lat, lng, fb) => fb || (kecAt(lat, lng) || {}).k || '';
+  MROWS = {
+    mall: D.malls.map(m => { const a = nearAudy(m[1], m[2]), c = comp5At(m[1], m[2]); return {id: m[10], note: m[11], kec: m[3], kota: m[4], cls: m[8], why: m[9], name: m[0], sub: m[3] ? 'Kec. ' + m[3] : '', city: shortK((kecAt(m[1], m[2]) || {}).k || m[4] || ''), lat: m[1], lng: m[2], p3: m[6], p5: m[7], audy: a[0], audyN: a[1] ? a[1].c + ' ' + a[1].n : '', comp: c[0], dent: c[1]}; }),
+    audy: D.branches.map(b => ({name: 'Audy ' + b.c + ' · ' + b.n, sub: 'Kec. ' + b.kec, city: shortK((kecAt(b.lat, b.lng) || {}).k || ''), lat: b.lat, lng: b.lng})),
+    comp: outlets.map(o => ({name: o[1], brand: BR[o[0]].name, color: BR[o[0]].color, sub: o[4], city: shortK(o[6] || (kecAt(o[2], o[3]) || {}).k || ''), lat: o[2], lng: o[3], src: ['Situs resmi / Google Maps', 'Perkiraan (tengah kecamatan)', 'OpenStreetMap'][o[7]]})),
+    life: D.life.map(x => ({name: x[1], brand: LM[x[0]].name, color: LM[x[0]].color, sub: '', city: shortK((kecAt(x[2], x[3]) || {}).k || ''), lat: x[2], lng: x[3]})),
+  };
+  return MROWS;
+}
+const MCOLS = {
+  mall: [['cls', 'Kelas'], ['name', 'Mall'], ['city', 'Kota/Kab.'], ['p3', 'Pasien ≤3 km', 1], ['p5', 'Pasien ≤5 km', 1], ['audy', 'Audy terdekat', 1], ['comp', 'Kompetitor ≤5 km (gigi)', 1]],
+  audy: [['name', 'Cabang'], ['city', 'Kota/Kab.']],
+  comp: [['brand', 'Brand'], ['name', 'Outlet'], ['city', 'Kota/Kab.'], ['src', 'Sumber titik']],
+  life: [['brand', 'Brand'], ['name', 'Nama'], ['city', 'Kota/Kab.']],
+};
+function renderMaster(){
+  const all = masterRows()[MT.tab], q = norm(MT.q);
+  const cities = [...new Set(all.map(r => r.city).filter(Boolean))].sort();
+  const sel = document.getElementById('mcity'); const prev = MT.city;
+  sel.innerHTML = '<option value="">Semua kota/kabupaten</option>' + cities.map(c => `<option${c === prev ? ' selected' : ''}>${esc(c)}</option>`).join('');
+  if (prev && !cities.includes(prev)) MT.city = '';
+  document.getElementById('mclass').hidden = MT.tab !== 'mall';
+  let rows = all.filter(r => (!MT.cls || MT.tab !== 'mall' || r.cls === MT.cls) && (!MT.city || r.city === MT.city) && (!q || norm([r.name, r.sub, r.city, r.brand].join(' ')).includes(q)));
+  const sk = MT.sort || (MT.tab === 'mall' ? 'p5' : 'name'), dir = MT.sort ? MT.dir : (MT.tab === 'mall' ? -1 : 1);
+  rows = rows.slice().sort((a, b) => { const x = a[sk], y = b[sk]; return (typeof x === 'number' ? x - y : String(x || '').localeCompare(String(y || ''), 'id')) * dir; });
+  document.getElementById('mcount').textContent = `${fmt(rows.length)} baris`;
+  const cols = MCOLS[MT.tab];
+  const cell = (r, [k, , num]) => {
+    if (k === 'cls') return `<td><span class="mcl ${r.cls}" style="margin:0">${r.cls}</span>${r.why ? `<small>${esc(r.why)}</small>` : ''}${r.note ? `<small>${esc(r.note)}</small>` : ''}</td>`;
+    if (k === 'p3' || k === 'p5') return `<td class="num">${kecAt(r.lat, r.lng)?.nd ? '–' : fmt(r[k])}</td>`;
+    if (k === 'name') return `<td><b>${esc(r.name)}</b>${r.sub ? `<small>${esc(r.sub)}</small>` : ''}</td>`;
+    if (k === 'brand') return `<td><span class="lifemk" style="display:inline-grid;vertical-align:-4px;margin-right:6px;background:${r.color}"></span>${esc(r.brand)}</td>`;
+    if (k === 'audy') return `<td class="num">${km(r.audy)}<small>${esc(r.audyN)}</small></td>`;
+    if (k === 'comp') return `<td class="num">${r.comp} <small style="display:inline">(${r.dent})</small></td>`;
+    if (num) return `<td class="num">${fmt(r[k])}</td>`;
+    return `<td>${esc(r[k] || '')}</td>`;
+  };
+  document.getElementById('mtbl').innerHTML = `<table><thead><tr>${cols.map(([k, t, num]) => `<th data-sort="${k}" class="${num ? 'r' : ''}">${t}${sk === k ? (dir > 0 ? ' ▲' : ' ▼') : ''}</th>`).join('')}<th class="r">Aksi</th></tr></thead><tbody>
+    ${MT.tab === 'mall' && MALL.edit === '__new' ? `<tr class="medit"><td colspan="${cols.length + 1}"><b>Tambah mall baru</b>${mallForm(null)}</td></tr>` : ''}
+    ${rows.slice(0, MT.limit).map((r, i) => MT.tab === 'mall' && MALL.edit === r.id ? `<tr class="medit"><td colspan="${cols.length + 1}"><b>Edit mall</b>${mallForm(r)}</td></tr>` : `<tr>${cols.map(c => cell(r, c)).join('')}<td><div class="acts">${MT.tab === 'mall' && canEditMall() ? `<button class="sbtn" type="button" data-i="${i}" data-a="edit">Edit</button>` : ''}<button class="sbtn" type="button" data-i="${i}" data-a="go">Analisa</button>${ST.canWrite ? `<button class="sbtn pri" type="button" data-i="${i}" data-a="add">+ Kandidat</button>` : ''}</div></td></tr>`).join('')}</tbody></table>`;
+  const shown = rows.slice(0, MT.limit);
+  document.querySelectorAll('#mtbl th[data-sort]').forEach(th => th.onclick = () => { const k = th.dataset.sort; if (MT.sort === k) MT.dir = -MT.dir; else { MT.sort = k; MT.dir = MCOLS[MT.tab].find(c => c[0] === k)[2] ? -1 : 1; } renderMaster(); });
+  document.querySelectorAll('#mtbl [data-a]').forEach(b => b.onclick = async () => { const r = shown[+b.dataset.i];
+    if (b.dataset.a === 'go') { analyse(r.lat, r.lng, r.name); document.getElementById('peta').scrollIntoView({behavior: 'smooth'}); }
+    else if (b.dataset.a === 'edit') { MALL.edit = r.id; renderMaster(); }
+    else { b.disabled = true; b.textContent = 'Menyimpan…'; const ok = await addCand(r.name, '', r.lat, r.lng); b.textContent = ok ? 'Tersimpan' : 'Gagal'; } });
+  if (MT.tab === 'mall' && MALL.edit) wireMallForm(MALL.edit === '__new' ? 'm-' + Date.now().toString(36) : MALL.edit, MALL.edit === '__new');
+  const addB = document.getElementById('mAdd'); addB.hidden = !(MT.tab === 'mall' && canEditMall());
+  document.getElementById('mHint').textContent = MT.tab === 'mall' ? (canEditMall() ? 'Data mall tersimpan di database halaman ini. Klik Edit untuk mengubah kelas, nama, kota atau titik; perubahan langsung terlihat oleh semua orang.' : ST.mode === 'db' ? 'Hanya Editor/Owner yang bisa mengubah data mall.' : '') : '';
+  const more = document.getElementById('mmore'); more.hidden = rows.length <= MT.limit; more.textContent = `Tampilkan lebih banyak (${fmt(rows.length - MT.limit)} lagi)`;
+}
+document.getElementById('mtabs').addEventListener('click', e => { const b = e.target.closest('[data-t]'); if (!b) return; MT.tab = b.dataset.t; MT.sort = null; MT.city = ''; MT.limit = 60;
+  document.querySelectorAll('#mtabs button').forEach(x => x.setAttribute('aria-selected', x === b)); renderMaster(); });
+document.getElementById('mq').addEventListener('input', e => { MT.q = e.target.value; MT.limit = 60; renderMaster(); });
+document.getElementById('mclass').addEventListener('change', e => { MT.cls = e.target.value; MT.limit = 60; renderMaster(); });
+document.getElementById('mcity').addEventListener('change', e => { MT.city = e.target.value; MT.limit = 60; renderMaster(); });
+document.getElementById('mAdd').addEventListener('click', () => { MALL.edit = '__new'; renderMaster(); document.getElementById('mtbl').scrollTop = 0; });
+document.getElementById('mmore').addEventListener('click', () => { MT.limit += 100; renderMaster(); });
+setTimeout(renderMaster, 0);
+
+var EMPTY_RES = `<h2>Cari lokasi calon cabang</h2><div class="empty"><p>Ketik lokasi di kotak pencarian atau klik titik di peta. Panel ini akan menampilkan:</p>
+  <ol><li>Lingkar 3 km dan 5 km dari titik Anda (bisa dipilih di atas)</li><li>Jumlah pasien Audy dalam lingkar dan di kecamatan itu</li><li>Cabang Audy terdekat</li><li>Jumlah outlet Erha, Satu Dental, Natasha, ZAP, FDC, OMDC, Medikids, Damesa, Sozo dalam radius, plus outlet terdekat</li><li>Brand lifestyle terdekat (Starbucks, Uniqlo, McDonald's, KFC, Pizza Hut) dan 5 mall terdekat</li><li>Tombol untuk menyimpan titik sebagai kandidat yang bisa di-approve</li></ol>
+  <p>Contoh: <a href="#" data-ex="Gandaria City">Gandaria City</a> · <a href="#" data-ex="Kecamatan Serpong">Serpong</a> · <a href="#" data-ex="-6.9175, 107.6191">-6.9175, 107.6191</a></p></div>`;
+document.getElementById('res').innerHTML = EMPTY_RES;
+function wireExamples(){ document.querySelectorAll('#res [data-ex]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); qi.value = a.dataset.ex; showSugg(); sg.hidden = true; submit(); })); }
+wireExamples();
+
+document.getElementById('foot').innerHTML = D.foot.map(s => `<div>${s}</div>`).join('');
+
+const mq = window.matchMedia('(prefers-color-scheme: dark)');
+const redraw = () => { drawBase(); if (last) analyse(last.lat, last.lng, last.label, null, true, last.note); };
+mq.addEventListener && mq.addEventListener('change', redraw);
+new MutationObserver(redraw).observe(document.documentElement, {attributes: true, attributeFilter: ['data-theme']});
+})();
+</script>

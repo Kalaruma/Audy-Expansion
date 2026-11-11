@@ -1,0 +1,5 @@
+# Replace with your Supabase project ref (Lovable sets this when you connect Supabase).
+project_id = "your-project-ref"
+
+[functions.claude]
+verify_jwt = true

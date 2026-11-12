@@ -769,7 +769,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent2);outlin
 .clist .ci .t b{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px}
 .clist .ci .t small{color:var(--muted);font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .kno{display:grid;place-items:center;min-width:30px;height:22px;border-radius:6px;color:#fff;font:700 11px var(--f-num);padding:0 4px}
-.kno.pending{background:#d97706}.kno.ok{background:#16a34a}.kno.no{background:#6b7280}
+.kno.pending{background:#d97706}.kno.ruko{background:#16a34a}.kno.ok{background:#7c3aed}.kno.no{background:#6b7280}
 .xbtn{font:inherit;font-size:16px;line-height:1;width:28px;height:28px;border-radius:7px;border:1px solid transparent;background:transparent;color:var(--muted);cursor:pointer;display:grid;place-items:center}
 .xbtn:hover{background:var(--bg);border-color:var(--line);color:var(--fg)}
 .clhead{display:flex;justify-content:space-between;align-items:center;gap:8px}
@@ -789,6 +789,8 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent2);outlin
 .foot{color:var(--muted);font-size:12px;display:grid;gap:5px}
 .foot b{color:var(--fg);font-weight:600}
 .msg{font-size:12.5px;color:#b42318}
+.sharebox{display:grid;gap:4px;font-size:12px;color:var(--muted);background:var(--soft);border-radius:8px;padding:8px 10px}
+.sharebox input{font:12px var(--f-num);padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--fg);width:100%}
 /* compact chips: one scrollable row */
 .mapcard{grid-template-columns:minmax(0,1fr)}
 #chipsbar{min-width:0;flex-wrap:nowrap}
@@ -860,7 +862,16 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent2);outlin
 .sbtn.ok{color:#15803d;border-color:#86efac}.sbtn.no{color:#b42318;border-color:#fda29b}
 .sbtn[disabled]{opacity:.45;cursor:default}
 .st{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;white-space:nowrap}
-.st.pending{background:#fef3c7;color:#92400e}.st.ok{background:#dcfce7;color:#166534}.st.no{background:#fee2e2;color:#991b1b}
+.st.pending{background:#fef3c7;color:#92400e}.st.ruko{background:#dcfce7;color:#166534}.st.ok{background:#ede9fe;color:#5b21b6}.st.no{background:#fee2e2;color:#991b1b}
+.steps{display:flex;gap:4px;flex-wrap:wrap;font-size:11px}.steps span{padding:2px 8px;border-radius:999px;background:var(--bg);color:var(--muted);border:1px solid var(--line)}
+.steps span.done1{background:#fef3c7;color:#92400e;border-color:#fcd34d}.steps span.done2{background:#dcfce7;color:#166534;border-color:#86efac}.steps span.done3{background:#ede9fe;color:#5b21b6;border-color:#c4b5fd}
+.sbtn.ruko{color:#15803d;border-color:#86efac}.sbtn.ok{color:#6d28d9!important;border-color:#c4b5fd!important}
+.appr{display:grid;gap:6px;font-size:12.5px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+.appr .chips2{display:flex;flex-wrap:wrap;gap:4px}.appr .chips2 span{display:inline-flex;align-items:center;gap:4px;background:#ede9fe;color:#5b21b6;border-radius:999px;padding:2px 4px 2px 9px;font-weight:600}
+.appr .chips2 button{border:0;background:transparent;color:inherit;cursor:pointer;font-size:14px;line-height:1;padding:0 4px}
+.appr .row2{display:flex;gap:6px;flex-wrap:wrap;position:relative}.appr input{font:inherit;font-size:12.5px;padding:5px 8px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--fg);flex:1 1 220px}
+.appr ul{position:absolute;top:100%;left:0;z-index:50;list-style:none;margin:2px 0 0;padding:4px;background:var(--panel);border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 20px rgba(0,0,0,.15);min-width:260px}
+.appr li{padding:5px 8px;border-radius:6px;cursor:pointer}.appr li:hover{background:var(--soft)}
 .lifechips{display:flex;flex-wrap:wrap;gap:4px 8px}
 .lifechips span{white-space:nowrap;font-family:var(--f-num);font-size:11.5px}
 .lifechips i{font-style:normal;display:inline-grid;place-items:center;width:18px;height:14px;border-radius:3px;color:#fff;font:700 8px var(--f-num);margin-right:3px;vertical-align:1px}
@@ -878,7 +889,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent2);outlin
 .note{font-size:12px;color:var(--muted)}
 .candpin{display:grid;place-items:center;width:30px;height:30px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2.5px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.45)}
 .candpin b{transform:rotate(45deg);color:#fff;font:700 11px var(--f-num)}
-.candpin.pending{background:#d97706}.candpin.ok{background:#16a34a}.candpin.no{background:#6b7280}
+.candpin.pending{background:#d97706}.candpin.ruko{background:#16a34a}.candpin.ok{background:#7c3aed}.candpin.no{background:#6b7280}
 .lifemk{display:grid;place-items:center;width:18px;height:18px;border-radius:4px;color:#fff;font:700 7.5px var(--f-num);border:1.5px solid var(--panel);box-shadow:0 1px 3px rgba(0,0,0,.3)}
 .ringlbl{display:inline-block;font:600 11px var(--f-num);background:var(--panel);border:1.5px solid;border-radius:999px;padding:0 7px;white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,.25)}
 .distlbl{display:inline-block;font:700 12px var(--f-num);background:#e11d48;color:#fff;border-radius:6px;padding:2px 7px;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,.35)}
@@ -947,6 +958,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent2);outlin
       <p>Setiap PIN kandidat dianalisa otomatis: jarak ke klinik terdekat, pasien Audy dalam 3 dan 5 km, kompetitor, mall dan brand lifestyle terdekat. Tambah kandidat dari panel analisa di atas atau dari tabel master data.</p></div>
       <div class="tools"><button class="sbtn pri" type="button" id="aiBtn" hidden>Minta analisa Claude</button></div></div>
     <div class="note" id="storeNote">Memuat daftar kandidat…</div>
+    <div class="appr" id="apprBox" hidden></div>
     <div id="candWrap"></div>
     <div id="aiBox" hidden></div>
   </section>
@@ -1347,10 +1359,28 @@ function summary(m){
 
 var MOVE_ID = null, CEDIT = null;
 function startMove(id){ MOVE_ID = id; CL_OPEN = true; renderClist(); }
+// ---- shareable point in the link: #titik-s622440-e10678360 (only letters, digits and hyphens survive in an artifact link)
+const ARTIFACT_URL = 'https://claude.ai/artifact/L25L1sZ3Esa3QJ8REQj24U';
+const ptHash = (lat, lng) => 'titik-' + (lat < 0 ? 's' : 'n') + Math.round(Math.abs(lat) * 1e5) + '-' + (lng < 0 ? 'w' : 'e') + Math.round(Math.abs(lng) * 1e5);
+function parsePtHash(h){ const m = String(h || '').replace(/^#/, '').match(/^titik-([ns])(\d+)-([ew])(\d+)$/); if (!m) return null; return [(m[1] === 's' ? -1 : 1) * (+m[2]) / 1e5, (m[3] === 'w' ? -1 : 1) * (+m[4]) / 1e5]; }
+var HASH_SELF = '';
+function setPtHash(lat, lng){ const h = ptHash(lat, lng); if (location.hash.replace('#', '') === h) return; HASH_SELF = h; try { location.hash = h; } catch (e) {} }
+function shareUrl(lat, lng){ const inClaude = /claude/i.test(location.hostname) || !/^https?:$/.test(location.protocol); return (inClaude ? ARTIFACT_URL : location.origin + location.pathname) + '#' + ptHash(lat, lng); }
+function wireShare(lat, lng){
+  const b = document.getElementById('shareBtn'); if (!b) return;
+  b.onclick = () => {
+    const url = shareUrl(lat, lng), box = document.getElementById('shareBox');
+    const show = () => { box.hidden = false; box.innerHTML = `<span>Salin link ini:</span><input id="shareUrl" readonly value="${esc(url)}">`; const i = document.getElementById('shareUrl'); i.focus(); i.select(); };
+    try { navigator.clipboard.writeText(url).then(() => { b.textContent = 'Link tersalin ✓'; box.hidden = false; box.innerHTML = `<span>Orang yang membuka link ini langsung melihat titik ini. Mereka perlu login claude.ai untuk melihat daftar kandidat.</span>`; setTimeout(() => { if (b.isConnected) b.textContent = 'Salin link titik ini'; }, 2500); }, show); } catch (e) { show(); }
+  };
+}
+window.addEventListener('hashchange', () => { const h = location.hash.replace('#', ''); if (h === HASH_SELF) return; const p = parsePtHash(h); if (p) analyse(p[0], p[1], 'Titik dari link', 15); });
+
 function analyse(lat, lng, label, zoom, keepView, note){
   if (MOVE_ID) { const id = MOVE_ID, c = ST.cands.find(x => x.id === id); MOVE_ID = null;
     if (c) { c.lat = +lat.toFixed(6); c.lng = +lng.toFixed(6); updCand(id, {lat: c.lat, lng: c.lng}); label = c.name; note = 'Titik kandidat dipindah ke sini.'; drawCandPins(); } }
   last = {lat, lng, label, note};
+  setPtHash(lat, lng);
   if (L_me) map.removeLayer(L_me);
   L_me = L.layerGroup().addTo(map);
   RINGS.slice().sort((a, b) => b - a).forEach(r => {
@@ -1388,7 +1418,8 @@ function analyse(lat, lng, label, zoom, keepView, note){
       <div><b>${M.mallA5} A · ${M.mallB5} B</b><span>mall dalam 5 km</span></div>
     </div>
     <div id="candBox">${candBoxHtml(cand, label)}</div>
-    <div class="links"><a href="${gm}" target="_blank" rel="noopener">Buka titik di Google Maps</a><a href="${gmd}" target="_blank" rel="noopener">Klinik gigi sekitar</a><a href="${gmm}" target="_blank" rel="noopener">Mall sekitar</a></div>
+    <div class="links"><a href="${gm}" target="_blank" rel="noopener">Buka titik di Google Maps</a><a href="${gmd}" target="_blank" rel="noopener">Klinik gigi sekitar</a><a href="${gmm}" target="_blank" rel="noopener">Mall sekitar</a><button class="linkbtn" type="button" id="shareBtn">Salin link titik ini</button></div>
+    <div class="sharebox" id="shareBox" hidden></div>
     <div class="meas" id="meas"><b>Ukur jarak:</b> arahkan kursor ke ikon untuk melihat lingkar 3/5 km-nya. Klik ikon atau baris di daftar bawah untuk menarik garis jarak. Klik area kosong di peta untuk memindah titik.</div>
     <h3>Cabang Audy terdekat</h3>
     <div class="rows">${au.slice(0, 3).map(([d, b]) => `<div class="row" data-lat="${b.lat}" data-lng="${b.lng}" data-name="${esc('Audy ' + b.c + ' · ' + b.n)}"><span class="mk audy lg">${esc(b.c)}</span><span class="nm"><b>${esc(b.n)}</b><small>Kec. ${esc(b.kec)}</small></span><span class="km">${km(d)}</span></div>`).join('')}</div>
@@ -1407,21 +1438,32 @@ function analyse(lat, lng, label, zoom, keepView, note){
   res.querySelectorAll('[data-lat]').forEach(el => { el.addEventListener('click', () => measure(+el.dataset.lat, +el.dataset.lng, el.dataset.name || '', true));
     let ht = null; el.addEventListener('mouseenter', () => { clearTimeout(ht); ht = setTimeout(() => hoverRings(+el.dataset.lat, +el.dataset.lng, '#e11d48'), HOVER_DELAY); }); el.addEventListener('mouseleave', () => { clearTimeout(ht); clearHover(); }); });
   const gb = document.getElementById('geoBtn'); if (gb) { const q = GEO_Q; gb.onclick = () => claudeGeocode(q, gb); } GEO_Q = '';
+  wireShare(lat, lng);
   wireCandBox(); if (typeof renderClist === 'function' && ST.cands.length) renderClist();
   if (window.matchMedia('(max-width:1000px)').matches && !keepView) res.scrollIntoView({behavior: 'smooth', block: 'start'});
 }
 
 // ---------- candidates: shared store (db) with a per-browser fallback ----------
-const ST = {mode: 'loading', cands: [], dec: {}, me: null, canWrite: true, canApprove: false, names: {}, db: null, user: null};
-const statusOf = c => (ST.dec[c.id] && ST.dec[c.id].status) || 'pending';
-const ST_LBL = {pending: 'Menunggu approval', ok: 'Disetujui', no: 'Ditolak'};
+const ST = {mode: 'loading', cands: [], dec: {}, me: null, myEmail: null, isOwner: false, isAdmin: false, canWrite: true, canApprove: false, approvers: {ids: [], emails: []}, names: {}, db: null, user: null};
+// 1 usulan (kuning) -> 2 ruko ada (hijau) -> 3 disetujui (ungu); ditolak (abu-abu)
+const statusOf = c => { const d = ST.dec[c.id] && ST.dec[c.id].status; if (d === 'ok' || d === 'no') return d; return c.ruko ? 'ruko' : 'pending'; };
+const ST_LBL = {pending: 'Usulan · cek ruko', ruko: 'Ruko ada · tunggu approval', ok: 'Disetujui', no: 'Ditolak'};
+function computeApprove(){
+  if (ST.mode !== 'db') { ST.canApprove = true; return; }
+  const a = ST.approvers || {ids: [], emails: []};
+  ST.canApprove = ST.isOwner || (ST.me && (a.ids || []).includes(ST.me)) || (!!ST.myEmail && (a.emails || []).map(x => String(x).toLowerCase()).includes(ST.myEmail.toLowerCase()));
+}
+const stepsHtml = c => { const s = statusOf(c); const r = s === 'ruko' || s === 'ok' || (s === 'no' && c.ruko);
+  return `<div class="steps"><span class="done1">1 Usulan</span><span class="${r ? 'done2' : ''}">2 Ruko ada</span><span class="${s === 'ok' ? 'done3' : ''}">3 Disetujui</span>${s === 'no' ? '<span style="background:#fee2e2;color:#991b1b;border-color:#fda29b">Ditolak</span>' : ''}</div>`; };
+const rukoBy = c => c.ruko && c.ruko.at ? ` · ruko dicek ${esc(String(c.ruko.at).slice(0, 10))}` : '';
+async function setRuko(id, on){ await updCand(id, {ruko: on ? {by: ST.me, at: new Date().toISOString()} : null}); if (!on && ST.dec[id] && ST.dec[id].status === 'ok') await decide(id, 'pending'); }
 function candAt(lat, lng){ return ST.cands.find(c => Math.abs(c.lat - lat) < 1e-6 && Math.abs(c.lng - lng) < 1e-6) || null; }
 function candNo(c){ return ST.cands.indexOf(c) + 1; }
 function candBoxHtml(c, label){
   if (c) { const s = statusOf(c), dd = ST.dec[c.id];
-    return `<div class="form"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><b>Kandidat K${candNo(c)} · ${esc(c.name)}</b><span class="st ${s}">${ST_LBL[s]}</span></div>
+    return `<div class="form"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><b>Kandidat K${candNo(c)} · ${esc(c.name)}</b><span class="st ${s}">${ST_LBL[s]}</span></div>${stepsHtml(c)}
       ${c.note ? `<div class="note">${esc(c.note)}</div>` : ''}${dd && dd.note ? `<div class="note">Catatan keputusan: ${esc(dd.note)}</div>` : ''}
-      <div class="tools">${ST.canWrite ? `<button class="sbtn" type="button" data-ced="${c.id}">Edit</button><button class="sbtn" type="button" data-cmv="${c.id}">Pindahkan titik</button>` : ''}${ST.canApprove ? `<button class="sbtn ok" type="button" data-dec="ok" data-id="${c.id}">Setujui</button><button class="sbtn no" type="button" data-dec="no" data-id="${c.id}">Tolak</button>${s !== 'pending' ? `<button class="sbtn" type="button" data-dec="pending" data-id="${c.id}">Kembalikan ke menunggu</button>` : ''}` : '<span class="note">Hanya Editor/Owner artefak yang bisa menyetujui.</span>'}<a class="sbtn" href="#kandidat">Lihat perbandingan</a></div></div>`; }
+      <div class="tools">${ST.canWrite ? `<button class="sbtn" type="button" data-ced="${c.id}">Edit</button><button class="sbtn" type="button" data-cmv="${c.id}">Pindahkan titik</button>` : ''}${ST.canWrite && s !== 'ok' ? `<button class="sbtn ruko" type="button" data-ruko="${c.ruko ? 0 : 1}" data-id="${c.id}">${c.ruko ? 'Batalkan ruko ada' : '✓ Ruko ada'}</button>` : ''}${ST.canApprove ? `<button class="sbtn ok" type="button" data-dec="ok" data-id="${c.id}" ${c.ruko ? '' : 'disabled title="Tandai Ruko ada dulu"'}>Setujui</button><button class="sbtn no" type="button" data-dec="no" data-id="${c.id}">Tolak</button>${ST.dec[c.id] && ST.dec[c.id].status !== 'pending' ? `<button class="sbtn" type="button" data-dec="pending" data-id="${c.id}">Batalkan keputusan</button>` : ''}` : '<span class="note">Approval hanya oleh penyetuju yang didaftarkan owner.</span>'}<a class="sbtn" href="#kandidat">Lihat perbandingan</a></div></div>`; }
   if (!ST.canWrite) return '';
   return `<div class="form"><b>Simpan titik ini sebagai kandidat</b>
     <label>Nama kandidat<input id="cName" type="text" maxlength="80" value="${esc(label.replace(/^Koordinat .*/, '').replace(/^Titik (pilihan|di )/, ''))}" placeholder="mis. Lippo Cikarang – The Hive"></label>
@@ -1434,6 +1476,7 @@ function wireCandBox(){
     const ok = await addCand(nm, document.getElementById('cNote').value.trim(), last.lat, last.lng, last.m);
     if (!ok) { sv.disabled = false; document.getElementById('cMsg').textContent = 'Gagal menyimpan. Coba lagi.'; } };
   document.querySelectorAll('#candBox [data-dec]').forEach(b => b.onclick = () => decide(b.dataset.id, b.dataset.dec));
+  document.querySelectorAll('#candBox [data-ruko]').forEach(b => b.onclick = () => { b.disabled = true; setRuko(b.dataset.id, b.dataset.ruko === '1'); });
   document.querySelectorAll('#candBox [data-ced]').forEach(b => b.onclick = () => { CEDIT = b.dataset.ced; CL_OPEN = true; renderClist(); document.getElementById('clistCard').scrollIntoView({block: 'nearest'}); });
   document.querySelectorAll('#candBox [data-cmv]').forEach(b => b.onclick = () => startMove(b.dataset.cmv));
 }
@@ -1528,7 +1571,7 @@ function candMetrics(c){ const key = c.lat + ',' + c.lng; if (!mcache.has(key)) 
 async function renderCands(){
   document.getElementById('navc').textContent = ST.cands.length;
   const note = document.getElementById('storeNote'), wrap = document.getElementById('candWrap');
-  note.textContent = ST.mode === 'db' ? `${ST.cands.length} kandidat · tersimpan bersama untuk semua yang membuka halaman ini${ST.canApprove ? ' · Anda bisa menyetujui' : ''}.`
+  note.textContent = ST.mode === 'db' ? `${ST.cands.length} kandidat · tersimpan bersama untuk semua yang membuka halaman ini${ST.canApprove ? ' · Anda termasuk penyetuju' : ''}.`
     : ST.mode === 'local' ? 'Penyimpanan bersama tidak tersedia di tampilan ini. Kandidat hanya tersimpan di browser ini dan tidak terlihat orang lain.' : 'Memuat daftar kandidat…';
   if (!ST.cands.length) { wrap.innerHTML = `<div class="empty"><p>Belum ada kandidat. Cari lokasi di atas (alamat, mall, koordinat) lalu klik <b>+ Jadikan kandidat</b>, atau pakai tombol <b>+ Kandidat</b> di tabel master data.</p></div>`; document.getElementById('aiBtn').hidden = true; return; }
   if (ST.mode === 'db' && ST.user) { const ids = [...new Set(ST.cands.map(c => c.by).concat(Object.values(ST.dec).map(d => d.by)).filter(Boolean))]; try { ST.names = await ST.user.profiles(ids); } catch (e) {} }
@@ -1546,31 +1589,53 @@ async function renderCands(){
         <td>${M.ml[0] ? `${esc(M.ml[0][1][0])}${mallTag(M.ml[0][1])}<small>${km(M.ml[0][0])} · ${M.mallA5} A / ${M.mallB5} B dalam 5 km</small>` : '–'}</td>
         <td>${M.mlA ? `${esc(M.mlA[1][0])}<small>${km(M.mlA[0])}</small>` : '–'}</td>
         <td>${lifeCell(M)}</td>
-        <td><span class="st ${s}">${ST_LBL[s]}</span>${dd && dd.by && s !== 'pending' ? `<small>${who(dd.by) ? esc(who(dd.by)) + ' · ' : ''}${esc((dd.at || '').slice(0, 10))}</small>` : ''}${dd && dd.note ? `<small>${esc(dd.note)}</small>` : ''}
+        <td><span class="st ${s}">${ST_LBL[s]}</span>${c.ruko && c.ruko.at ? `<small>ruko dicek ${esc(String(c.ruko.at).slice(0, 10))}</small>` : ''}${dd && dd.by && (s === 'ok' || s === 'no') ? `<small>${who(dd.by) ? esc(who(dd.by)) + ' · ' : ''}${esc((dd.at || '').slice(0, 10))}</small>` : ''}${dd && dd.note ? `<small>${esc(dd.note)}</small>` : ''}
           ${ST.canApprove ? `<input id="dn_${c.id}" type="text" placeholder="catatan keputusan" style="margin-top:4px;font:inherit;font-size:11.5px;padding:3px 6px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--fg);width:100%">` : ''}</td>
-        <td><div class="acts"><button class="sbtn" type="button" data-act="view">Lihat</button>${ST.canWrite ? '<button class="sbtn" type="button" data-act="edit">Edit</button>' : ''}${ST.canApprove ? `<button class="sbtn ok" type="button" data-act="ok">Setujui</button><button class="sbtn no" type="button" data-act="no">Tolak</button>` : ''}${ST.canWrite ? `<button class="sbtn" type="button" data-act="del">Hapus</button>` : ''}</div></td></tr>`; }).join('')}
+        <td><div class="acts"><button class="sbtn" type="button" data-act="view">Lihat</button>${ST.canWrite ? '<button class="sbtn" type="button" data-act="edit">Edit</button>' : ''}${ST.canWrite && s !== 'ok' ? `<button class="sbtn ruko" type="button" data-act="${c.ruko ? 'unruko' : 'ruko'}">${c.ruko ? 'Batal ruko' : '✓ Ruko ada'}</button>` : ''}${ST.canApprove ? `<button class="sbtn ok" type="button" data-act="ok" ${c.ruko ? '' : 'disabled title="Tandai Ruko ada dulu"'}>Setujui</button><button class="sbtn no" type="button" data-act="no">Tolak</button>` : ''}${ST.canWrite ? `<button class="sbtn" type="button" data-act="del">Hapus</button>` : ''}</div></td></tr>`; }).join('')}
   </tbody></table></div>`;
   wrap.querySelectorAll('tr[data-id]').forEach(tr => tr.querySelectorAll('[data-act]').forEach(b => b.onclick = () => {
     const id = tr.dataset.id, c = ST.cands.find(x => x.id === id), a = b.dataset.act;
+    if (a === 'ruko' || a === 'unruko') { b.disabled = true; setRuko(id, a === 'ruko'); return; }
     if (a === 'view') { if (HID.has(id)) { HID.delete(id); saveHid(); drawCandPins(); } analyse(c.lat, c.lng, c.name); document.getElementById('peta').scrollIntoView({behavior: 'smooth'}); }
     else if (a === 'edit') { CEDIT = id; CL_OPEN = true; renderClist(); analyse(c.lat, c.lng, c.name); document.getElementById('peta').scrollIntoView({behavior: 'smooth'}); }
     else if (a === 'del') { if (b.dataset.confirm) delCand(id); else { b.dataset.confirm = '1'; b.textContent = 'Yakin hapus?'; setTimeout(() => { if (b.isConnected) { delete b.dataset.confirm; b.textContent = 'Hapus'; } }, 4000); } }
     else decide(id, a); }));
   document.getElementById('aiBtn').hidden = !ST.sample;
 }
+async function renderAppr(){
+  const box = document.getElementById('apprBox'); if (!box) return;
+  if (ST.mode !== 'db') { box.hidden = true; return; }
+  const a = ST.approvers || {ids: [], emails: []}; box.hidden = false;
+  let names = {}; if (ST.user && (a.ids || []).length) { try { names = await ST.user.profiles(a.ids); } catch (e) {} }
+  const chips = [...(a.ids || []).map(id => ({k: 'id', v: id, t: (names[id] && (names[id].name || names[id].email)) || 'anggota tim'})), ...(a.emails || []).map(e => ({k: 'em', v: e, t: e}))];
+  box.innerHTML = `<div><b>Penyetuju lokasi</b> · hanya mereka (dan owner) yang bisa menekan <b>Setujui</b> / <b>Tolak</b>. Tanda <b>Ruko ada</b> bisa diisi semua anggota yang bisa menambah kandidat.</div>
+    <div class="chips2">${chips.map(c => `<span>${esc(c.t)}${ST.isOwner ? `<button type="button" title="Hapus" data-rk="${c.k}" data-rv="${esc(c.v)}">×</button>` : ''}</span>`).join('') || '<i class="note">Belum ada penyetuju — sementara hanya owner.</i>'}</div>
+    ${ST.isOwner ? `<div class="row2"><input id="apprQ" type="text" placeholder="Ketik nama atau email lalu pilih / tekan Tambah"><button class="sbtn pri" type="button" id="apprAdd">Tambah penyetuju</button><ul id="apprList" hidden></ul></div>` : ''}`;
+  const save = async (next) => { try { await ST.db.doc('pengaturan/approver').set(next); } catch (e) { alertNote('Gagal menyimpan daftar penyetuju.'); } };
+  box.querySelectorAll('[data-rk]').forEach(b => b.onclick = () => { const n = {ids: [...(a.ids || [])], emails: [...(a.emails || [])]}; if (b.dataset.rk === 'id') n.ids = n.ids.filter(x => x !== b.dataset.rv); else n.emails = n.emails.filter(x => x !== b.dataset.rv); save(n); });
+  const q = document.getElementById('apprQ'), ul = document.getElementById('apprList'), add = document.getElementById('apprAdd');
+  if (!q) return;
+  q.oninput = async () => { if (!ST.user || !ST.user.search) return; const hits = await ST.user.search(q.value.trim()); ul.innerHTML = hits.slice(0, 8).map((h, i) => `<li data-i="${i}">${esc(h.name)}${h.email ? ` <small class="note">${esc(h.email)}</small>` : ''}</li>`).join(''); ul.hidden = !hits.length;
+    ul.querySelectorAll('li').forEach(li => li.onmousedown = e => { e.preventDefault(); const h = hits[+li.dataset.i]; ul.hidden = true; q.value = ''; if (!(a.ids || []).includes(h.id)) save({ids: [...(a.ids || []), h.id], emails: [...(a.emails || [])]}); }); };
+  q.onfocus = q.oninput; q.onblur = () => setTimeout(() => { ul.hidden = true; }, 150);
+  add.onclick = () => { const v = q.value.trim().toLowerCase(); if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)) { q.focus(); q.placeholder = 'Pilih dari daftar, atau ketik email lengkap'; return; } if (!(a.emails || []).includes(v)) save({ids: [...(a.ids || [])], emails: [...(a.emails || []), v]}); q.value = ''; };
+}
+function alertNote(t){ const n = document.getElementById('storeNote'); if (n) n.textContent = t; }
 function onCands(){ drawCandPins(); renderCands(); renderClist(); if (last) { const box = document.getElementById('candBox'); if (box) { box.innerHTML = candBoxHtml(candAt(last.lat, last.lng), last.label); wireCandBox(); } } }
 
 (async function initStore(){
   const use = window.claude && window.claude.use ? n => window.claude.use(n).catch(() => null) : async () => null;
   const [db, user, sample] = await Promise.all([use('db'), use('user'), use('sample')]);
   ST.user = user; ST.sample = sample;
-  if (user) { try { ST.me = await user.id(); ST.canApprove = await user.canEdit(); const w = await user.can('data.write'); if (w === false) ST.canWrite = false; } catch (e) {} }
-  if (!db) { ST.mode = 'local'; ST.canApprove = true; ST.canWrite = true; loadLocal(); onCands(); return; }
+  if (user) { try { const me = await user.me(); ST.me = me.id; ST.myEmail = me.email; ST.isOwner = !!me.isOwner; ST.isAdmin = await user.canEdit(); const w = await user.can('data.write'); if (w === false) ST.canWrite = false; } catch (e) {} }
+  if (!db) { ST.mode = 'local'; ST.canApprove = true; ST.canWrite = true; ST.isAdmin = true; loadLocal(); onCands(); return; }
   ST.db = db; ST.mode = 'db';
   const timer = setTimeout(() => { document.getElementById('storeNote').textContent = 'Daftar kandidat belum bisa dimuat. Periksa koneksi; daftar akan muncul sendiri begitu tersambung.'; }, 10000);
   db.collection('kandidat').orderBy('at').onSnapshot(snap => { if (!snap.metadata.fromCache) clearTimeout(timer); ST.cands = snap.docs.map(d => ({id: d.id, ...d.data()})); onCands(); },
     e => { clearTimeout(timer); document.getElementById('storeNote').textContent = 'Daftar kandidat tidak bisa dimuat di tampilan ini.'; });
   db.collection('mall').onSnapshot(snap => { if (!snap.size) return; MALL.docs = snap.docs.map(d => ({id: d.id, ...d.data()})); applyMallDocs(); }, () => {});
+  computeApprove();
+  db.collection('pengaturan').onSnapshot(snap => { const d = snap.docs.find(x => x.id === 'approver'); ST.approvers = (d && d.data()) || {ids: [], emails: []}; computeApprove(); renderAppr(); onCands(); if (last) { const box = document.getElementById('candBox'); if (box) { box.innerHTML = candBoxHtml(candAt(last.lat, last.lng), last.label); wireCandBox(); } } }, () => {});
   db.collection('keputusan').onSnapshot(snap => { const m = {}; snap.docs.forEach(d => m[d.id] = d.data()); ST.dec = m; onCands(); }, () => {});
 })();
 
@@ -1611,7 +1676,7 @@ function applyMallDocs(){
   renderMaster(); renderCands(); renderClist();
   if (last) analyse(last.lat, last.lng, last.label, null, true, last.note);
 }
-const canEditMall = () => ST.mode === 'db' && ST.canApprove;
+const canEditMall = () => ST.mode === 'db' && ST.isAdmin;
 async function saveMall(id, f){
   const old = (MALL.docs || []).find(d => d.id === id) || {};
   const moved = !old.id || Math.abs((old.lat || 0) - f.lat) > 1e-6 || Math.abs((old.lng || 0) - f.lng) > 1e-6;
@@ -1714,6 +1779,8 @@ var EMPTY_RES = `<h2>Cari lokasi calon cabang</h2><div class="empty"><p>Ketik lo
 document.getElementById('res').innerHTML = EMPTY_RES;
 function wireExamples(){ document.querySelectorAll('#res [data-ex]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); qi.value = a.dataset.ex; showSugg(); sg.hidden = true; submit(); })); }
 wireExamples();
+// opened from a shared link: go straight to that point
+(function(){ const p0 = parsePtHash(location.hash); if (p0) setTimeout(() => analyse(p0[0], p0[1], 'Titik dari link', 15), 0); })();
 
 document.getElementById('foot').innerHTML = D.foot.map(s => `<div>${s}</div>`).join('');
 

@@ -128,7 +128,7 @@ let people: Person[] = [];
 async function loadPeople() { const { data } = await supabase.rpc("audy_people"); people = (data || []) as Person[]; return people; }
 function userApi(user: User, role: Role) {
   const name = (id: string) => (people.find((p) => p.user_id === id)?.email || "").split("@")[0];
-  const prof = (id: string) => ({ id, name: name(id), avatarUrl: "", color: "#6b7280", email: null, isMe: id === user.id, guest: false });
+  const prof = (id: string) => ({ id, name: name(id), avatarUrl: "", color: "#6b7280", email: people.find((p) => p.user_id === id)?.email || null, isMe: id === user.id, guest: false });
   return {
     isOwner: async () => role === "owner",
     canEdit: async () => role === "owner" || role === "editor",
@@ -139,7 +139,11 @@ function userApi(user: User, role: Role) {
     avatarUrl: async () => null,
     email: async () => user.email || null,
     profiles: async (ids: string[] | string) => { const list = Array.isArray(ids) ? ids : [ids]; if (list.some((i) => !people.find((p) => p.user_id === i))) await loadPeople(); return Object.fromEntries(list.map((i) => [i, prof(i)])); },
-    search: async () => [],
+    // used by the page's "Penyetuju lokasi" box: pick a team member by name or email
+    search: async (q: string) => {
+      await loadPeople(); const t = (q || "").trim().toLowerCase();
+      return people.filter((p) => !t || p.email.toLowerCase().includes(t)).slice(0, 20).map((p) => prof(p.user_id));
+    },
   };
 }
 

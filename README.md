@@ -1,8 +1,10 @@
 # Audy Expansion — versi Lovable
 
-Halaman **Audy Expansion** (artefak claude.ai versi 13) yang sama persis, dijalankan sebagai aplikasi web sendiri:
+Halaman **Audy Expansion** (artefak claude.ai versi 15) yang sama persis, dijalankan sebagai aplikasi web sendiri:
 
-- **Login**, dengan peran tim: Owner, Editor, Contributor, dan Viewer.
+- **Login**, dengan peran tim: Owner, Editor, Contributor, dan Viewer. Tim tidak perlu akun Claude.
+- **Approval 3 langkah**: Usulan (kuning), Ruko ada (hijau), Disetujui (ungu). Ditolak tampil abu-abu. Hanya email penyetuju yang didaftarkan Owner yang bisa menyetujui. Aturan ini dikunci di database.
+- **Link titik**: tombol "Salin link titik ini" membuat link yang langsung membuka titik tersebut.
 - **Kandidat, approval, dan data mall** tersimpan bersama di Supabase. Data dari artefak (16 kandidat, 1 keputusan, 485 mall beserta editannya) ikut dipindahkan.
 - Tombol **"Minta analisa Claude"** dan **"Cari titik dengan Claude"** aktif bila API key Anthropic diisi. Ini opsional.
 
@@ -46,9 +48,12 @@ python scripts/split_artifact.py audy-expansion.html
 2. Klik **SQL Editor**, lalu **New query**.
 3. Buka file `supabase/migrations/20261111000001_audy_schema.sql` di GitHub, klik **Raw**, salin semua, tempel di SQL Editor, lalu klik **Run**. Pastikan hasilnya *Success*.
 4. Ulangi untuk `supabase/migrations/20261111000002_audy_seed.sql`. File ini berisi 16 kandidat, 1 keputusan, dan 485 mall.
-5. Cek di **Table Editor → audy_docs**. Harus ada 502 baris.
+5. Ulangi untuk `supabase/migrations/20261112000003_audy_approvers.sql`. File ini memasang aturan approval: hanya Owner dan penyetuju terdaftar yang bisa menyetujui.
+6. Cek di **Table Editor → audy_docs**. Harus ada 503 baris.
 
-> Lovable kadang menjalankan file migrasi sendiri saat Supabase tersambung. Kalau tabel `audy_docs` sudah ada dan berisi 502 baris, langkah 3 tidak perlu diulang.
+> Lovable kadang menjalankan file migrasi sendiri saat Supabase tersambung. Kalau tabel `audy_docs` sudah ada dan berisi 503 baris, langkah 3 tidak perlu diulang.
+
+> **Sudah pernah memasang versi sebelumnya?** Cukup jalankan file `20261112000003_audy_approvers.sql` saja. Data yang sudah ada tidak berubah.
 
 ### Langkah 4 — Atur login
 1. Di Supabase buka **Authentication → URL Configuration**.
@@ -64,11 +69,20 @@ python scripts/split_artifact.py audy-expansion.html
 ### Langkah 6 — Undang tim
 1. Minta anggota tim membuka alamat aplikasi dan **Daftar**. Mereka otomatis menjadi **Viewer** (hanya bisa melihat).
 2. Klik **Tim** di kanan atas, lalu ubah peran mereka:
-   - **Contributor**: bisa menambah, edit, dan hapus kandidat.
-   - **Editor**: bisa juga menyetujui/menolak kandidat dan mengedit data mall.
-   - **Owner**: bisa juga mengatur peran orang lain.
+   - **Contributor**: bisa menambah, edit, dan hapus kandidat, serta menandai **Ruko ada**.
+   - **Editor**: bisa juga mengedit data mall.
+   - **Owner**: bisa juga mengatur peran orang lain, mengatur daftar penyetuju, dan menyetujui.
 3. Orang yang perannya diubah perlu memuat ulang halaman.
 4. Supaya orang luar tidak bisa mendaftar sendiri, nonaktifkan pendaftaran: Supabase → **Authentication → Providers → Email → Enable sign ups: off**. Setelah itu, tambahkan anggota lewat **Authentication → Users → Invite user**.
+
+### Langkah 6b — Daftarkan penyetuju lokasi
+1. Buka bagian **Kandidat lokasi untuk approval**, lalu cari kotak **Penyetuju lokasi**.
+2. Ketik email anggota tim, lalu pilih dari daftar, atau klik **Tambah penyetuju**. Email boleh didaftarkan sebelum orangnya mendaftar.
+3. Penyetuju harus masuk dengan email yang sama persis. Perannya boleh apa saja, termasuk Viewer.
+4. Alurnya:
+   - Kandidat baru berstatus **Usulan** (kuning).
+   - Setelah ruko dicek, Contributor/Editor/Owner klik **✓ Ruko ada** (hijau).
+   - Setelah itu baru penyetuju bisa klik **Setujui** (ungu) atau **Tolak** (abu-abu).
 
 ### Langkah 7 (opsional) — Aktifkan tombol Claude
 1. Buat API key di **console.anthropic.com** → API Keys. Pemakaiannya ditagih ke akun Anthropic Anda.

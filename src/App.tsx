@@ -3,7 +3,7 @@ import type { Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { installClaudeShim, type Person, type Role } from "@/claudeShim";
 
-const ROLE_LABEL: Record<Role, string> = { owner: "Owner", editor: "Editor (bisa approve & edit mall)", contributor: "Contributor (bisa tambah kandidat)", viewer: "Viewer (lihat saja)" };
+const ROLE_LABEL: Record<Role, string> = { owner: "Owner", editor: "Editor (kandidat + edit mall)", contributor: "Contributor (tambah kandidat & tandai ruko)", viewer: "Viewer (lihat saja)" };
 
 function Login() {
   const [email, setEmail] = useState(""), [pw, setPw] = useState(""), [mode, setMode] = useState<"in" | "up">("in"), [msg, setMsg] = useState(""), [busy, setBusy] = useState(false);

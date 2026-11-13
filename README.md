@@ -46,6 +46,8 @@ python scripts/split_artifact.py audy-expansion.html
 ### Langkah 3 — Buat tabel dan masukkan data dari artefak
 1. Buka **supabase.com/dashboard**, lalu pilih project tadi.
 2. Klik **SQL Editor**, lalu **New query**.
+   - **Cara tercepat:** buka file `SETUP_SUPABASE.sql` (di folder utama repo/ZIP), salin **seluruh isinya**, tempel, lalu klik **Run**. File ini berisi ketiga file di bawah sekaligus, jadi langkah 3–5 bisa dilewati. Hasilnya menampilkan `jumlah_baris_audy_docs` = 503.
+   - Yang ditempel harus **isi** file, bukan nama filenya.
 3. Buka file `supabase/migrations/20261111000001_audy_schema.sql` di GitHub, klik **Raw**, salin semua, tempel di SQL Editor, lalu klik **Run**. Pastikan hasilnya *Success*.
 4. Ulangi untuk `supabase/migrations/20261111000002_audy_seed.sql`. File ini berisi 16 kandidat, 1 keputusan, dan 485 mall.
 5. Ulangi untuk `supabase/migrations/20261112000003_audy_approvers.sql`. File ini memasang aturan approval: hanya Owner dan penyetuju terdaftar yang bisa menyetujui.
